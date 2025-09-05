@@ -1,0 +1,64 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Auth {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateAuthInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Message {
+  message: String!
+}
+
+type Mutation {
+  createAuth(createAuthInput: CreateAuthInput!): Auth!
+  deleteMe: Message!
+  removeAuth(id: Int!): Auth!
+  updateAuth(updateAuthInput: UpdateAuthInput!): Auth!
+  updateMe(data: UpdateUserInput!): UserEntity!
+}
+
+type Query {
+  auth(id: Int!): Auth!
+  hello: String!
+  me: UserEntity!
+}
+
+input UpdateAuthInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateUserInput {
+  email: String
+  locale: String
+  name: String
+  picture: String
+  username: String
+}
+
+type UserEntity {
+  createdAt: DateTime!
+  email: String!
+  emailVerified: Boolean!
+  id: String!
+  locale: String
+  name: String!
+  picture: String
+  provider: String!
+  twoFactorEnabled: Boolean!
+  updatedAt: DateTime!
+  username: String!
+}
