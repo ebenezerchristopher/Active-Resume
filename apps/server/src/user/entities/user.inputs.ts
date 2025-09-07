@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { UpdateUserDto } from './update-user';
+import { UpdateUserDto } from '@active-resume/dto';
 
 @InputType()
 export class UpdateUserInput implements UpdateUserDto {

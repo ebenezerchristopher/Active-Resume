@@ -1,35 +1,90 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import {
+  authResponseSchema,
+  RegisterDto,
+  registerSchema,
+  UserWithSecrets,
+} from '@active-resume/dto';
+import { Response } from 'express';
+
 import { AuthService } from './auth.service';
-import { Auth } from './entities/auth.entity';
-import { CreateAuthInput } from './dto/create-auth.input';
-import { UpdateAuthInput } from './dto/update-auth.input';
+import { AuthResponse } from './entities';
+import { RegisterInput } from './entities';
+import { payloadSchema } from './utils/payload';
+import { InternalServerErrorException } from '@nestjs/common';
+import { ErrorMessage } from '@active-resume/utils';
+import { ConfigService } from '@nestjs/config';
+import { getCookieOptions } from './utils/cookie';
 
-@Resolver(() => Auth)
+@Resolver()
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService
+  ) {}
 
-  @Mutation(() => Auth)
-  createAuth(@Args('createAuthInput') createAuthInput: CreateAuthInput) {
-    return this.authService.create(createAuthInput);
+  private async exchangeToken(
+    id: string,
+    email: string,
+    isTwoFactorAuth = false
+  ) {
+    try {
+      const payload = payloadSchema.parse({ id, isTwoFactorAuth });
+
+      const accessToken = this.authService.generateToken('access', payload);
+      const refreshToken = this.authService.generateToken('refresh', payload);
+
+      // Set Refresh Token in Database
+      await this.authService.setRefreshToken(email, refreshToken);
+
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        ErrorMessage.SomethingWentWrong
+      );
+    }
   }
 
-  @Query(() => [Auth], { name: 'auth' })
-  findAll() {
-    return this.authService.findAll();
+  private async handleAuthenticationResponse(
+    user: UserWithSecrets,
+    response: Response,
+    isTwoFactorAuth = false,
+    redirect = false
+  ) {
+    let status = 'authenticated';
+
+    const baseUrl = this.configService.get('PUBLIC_URL');
+    const redirectUrl = new URL(`${baseUrl}/auth/callback`);
+
+    const { accessToken, refreshToken } = await this.exchangeToken(
+      user.id,
+      user.email,
+      isTwoFactorAuth
+    );
+
+    response.cookie('Authentication', accessToken, getCookieOptions('access'));
+    response.cookie('Refresh', refreshToken, getCookieOptions('refresh'));
+
+    if (user.twoFactorEnabled && !isTwoFactorAuth) status = '2fa_required';
+
+    const responseData = authResponseSchema.parse({ status, user });
+
+    return responseData;
+
+    // cant do this because apollo also tries to send a response
+    //redirectUrl.searchParams.set('status', status);
+    //if (redirect) response.redirect(redirectUrl.toString());
+    // else response.status(200).send(responseData);
   }
 
-  @Query(() => Auth, { name: 'auth' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.authService.findOne(id);
-  }
+  @Mutation(() => AuthResponse)
+  async register(
+    @Args('data') data: RegisterInput,
+    @Context() { res }: { res: Response }
+  ): Promise<AuthResponse> {
+    const user = await this.authService.register(data as RegisterDto);
 
-  @Mutation(() => Auth)
-  updateAuth(@Args('updateAuthInput') updateAuthInput: UpdateAuthInput) {
-    return this.authService.update(updateAuthInput.id, updateAuthInput);
-  }
-
-  @Mutation(() => Auth)
-  removeAuth(@Args('id', { type: () => Int }) id: number) {
-    return this.authService.remove(id);
+    return this.handleAuthenticationResponse(user, res);
   }
 }

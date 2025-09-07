@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
-import { UserWithSecrets } from './dto';
+import { UserWithSecrets } from '@active-resume/dto';
 import { ErrorMessage } from '@active-resume/utils';
 import { PrismaService } from 'nestjs-prisma';
 

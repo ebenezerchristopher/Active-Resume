@@ -1,4 +1,4 @@
-import { UserDto } from './user';
+import { UserDto } from '@active-resume/dto';
 import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType('UserEntity')
@@ -13,10 +13,10 @@ export class UserEntity implements UserDto {
   locale: string | null;
 
   @Field()
-  username: string;
+  username?: string;
 
   @Field()
-  email: string;
+  email?: string;
 
   @Field()
   emailVerified: boolean;
@@ -28,11 +28,11 @@ export class UserEntity implements UserDto {
   provider: 'email' | 'github' | 'google' | 'openid';
 
   @Field(() => String, { nullable: true })
-  picture: string | null;
+  picture?: string | null;
 
   @Field()
-  createdAt: Date;
+  createdAt?: Date;
 
   @Field()
-  updatedAt: Date;
+  updatedAt?: Date;
 }

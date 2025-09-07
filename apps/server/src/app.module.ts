@@ -5,7 +5,6 @@ import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config/config.module';
 import { DatabaseModule } from './database/database.module';
-import { HelloModule } from './hello/hello.module';
 import { UserModule } from './user/user.module';
 @Module({
   imports: [
@@ -19,10 +18,9 @@ import { UserModule } from './user/user.module';
       context: ({ req, res }) => ({ req, res }),
     }),
     UserModule,
-    AuthModule,
+    AuthModule.register(),
     ConfigModule,
     DatabaseModule,
-    HelloModule,
   ],
   controllers: [],
   providers: [],

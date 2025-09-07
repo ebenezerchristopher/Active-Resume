@@ -3,7 +3,7 @@ import { dateSchema } from '@active-resume/utils';
 import { createZodDto } from 'nestjs-zod/dto';
 import { z } from 'zod';
 
-import { secretsSchema } from './secrets-schema';
+import { secretsSchema } from '../secrets';
 
 export const usernameSchema = z
   .string()

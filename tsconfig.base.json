@@ -18,6 +18,7 @@
       "@/artboard/*": ["apps/artboard/src/*"],
       "@/client/*": ["apps/client/src/*"],
       "@/server/*": ["apps/server/src/*"],
+      "@active-resume/dto": ["libs/dto/src/index.ts"],
       "@active-resume/schema": ["libs/schema/src/index.ts"],
       "@active-resume/utils": ["libs/utils/src/index.ts"]
     }
