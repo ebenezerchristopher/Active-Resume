@@ -7,7 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { RegisterDto, UserWithSecrets } from '@active-resume/dto';
+import { LoginDto, RegisterDto, UserWithSecrets } from '@active-resume/dto';
 import { ErrorMessage } from '@active-resume/utils';
 import * as bcryptjs from 'bcryptjs';
 //import { Response } from "express";
@@ -17,7 +17,7 @@ import { Config } from '../config/schema';
 // import { MailService } from "../mail/mail.service";
 import { UserService } from '../user/user.service';
 //import { getCookieOptions } from "./utils/cookie";
-import { Payload, payloadSchema } from './utils/payload';
+import { Payload } from './utils/payload';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +29,18 @@ export class AuthService {
 
   private hash(password: string): Promise<string> {
     return bcryptjs.hash(password, 10);
+  }
+
+  private compare(password: string, hash: string): Promise<boolean> {
+    return bcryptjs.compare(password, hash);
+  }
+
+  private async validatePassword(password: string, hashedPassword: string) {
+    const isValid = await this.compare(password, hashedPassword);
+
+    if (!isValid) {
+      throw new BadRequestException(ErrorMessage.InvalidCredentials);
+    }
   }
 
   generateToken(grantType: 'access' | 'refresh', payload: Payload) {
@@ -44,15 +56,29 @@ export class AuthService {
     });
   }
 
-  private async exchangeToken(id: string, email: string) {
-    // For now, isTwoFactorAuth is false. This will be updated later.
-    const payload = payloadSchema.parse({ id, isTwoFactorAuth: false });
-    const accessToken = this.generateToken('access', payload);
-    const refreshToken = this.generateToken('refresh', payload);
+  async setLastSignedIn(email: string) {
+    await this.userService.updateByEmail(email, {
+      secrets: { update: { lastSignedIn: new Date() } },
+    });
+  }
 
-    await this.setRefreshToken(email, refreshToken);
+  async authenticate({ identifier, password }: LoginDto) {
+    try {
+      const user = await this.userService.findOneByIdentifierOrThrow(
+        identifier
+      );
 
-    return { accessToken, refreshToken };
+      if (!user.secrets?.password) {
+        throw new BadRequestException(ErrorMessage.OAuthUser);
+      }
+
+      await this.validatePassword(password, user.secrets.password);
+      await this.setLastSignedIn(user.email);
+
+      return user;
+    } catch {
+      throw new BadRequestException(ErrorMessage.InvalidCredentials);
+    }
   }
 
   async setRefreshToken(email: string, token: string | null) {

@@ -8,13 +8,15 @@ import {
 import { Response } from 'express';
 
 import { AuthService } from './auth.service';
-import { AuthResponse } from './entities';
+import { AuthResponse, LoginInput } from './entities';
 import { RegisterInput } from './entities';
 import { payloadSchema } from './utils/payload';
-import { InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException, UseGuards } from '@nestjs/common';
 import { ErrorMessage } from '@active-resume/utils';
 import { ConfigService } from '@nestjs/config';
 import { getCookieOptions } from './utils/cookie';
+import { LocalGuard } from './guards/local.guard';
+import { User } from '../user/decorators/user.decorator';
 
 @Resolver()
 export class AuthResolver {
@@ -85,6 +87,17 @@ export class AuthResolver {
   ): Promise<AuthResponse> {
     const user = await this.authService.register(data as RegisterDto);
 
+    return this.handleAuthenticationResponse(user, res);
+  }
+
+  @Mutation(() => AuthResponse)
+  @UseGuards(LocalGuard)
+  async login(
+    // `data` is used by the guard via LocalGuard#getRequest
+    @Args('data') _data: LoginInput,
+    @User() user: UserWithSecrets,
+    @Context() { res }: { res: Response }
+  ): Promise<AuthResponse> {
     return this.handleAuthenticationResponse(user, res);
   }
 }
