@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { JwtGuard } from '../auth/guards/jwt.guard';
 import { User as CurrentUser } from './decorators/user.decorator';
 import { UserDto } from '@active-resume/dto';
 import { UserEntity } from './entities';
@@ -20,14 +20,14 @@ export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Query(() => UserEntity, { name: 'me' })
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(JwtGuard)
   me(@CurrentUser() user: UserDto) {
     // Use the Zod schema to strip out secrets and ensure the correct shape
     return user;
   }
 
   @Mutation(() => UserEntity, { name: 'updateMe' })
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(JwtGuard)
   async updateMe(
     @CurrentUser() user: UserDto,
     @Args('data') data: UpdateUserInput
@@ -61,7 +61,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Message)
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(JwtGuard)
   async deleteMe(@CurrentUser() user: UserDto): Promise<Message> {
     await this.userService.deleteOneById(user.id);
 

@@ -8,7 +8,10 @@ export const getCookieOptions = (
     return {
       httpOnly: true,
       sameSite: 'strict',
-      secure: (process.env.PUBLIC_URL ?? '').includes('https://'),
+      secure:
+        process.env.NODE_ENV === 'development'
+          ? false
+          : (process.env.PUBLIC_URL ?? '').includes('https://'),
       expires: new Date(Date.now() + 1000 * 60 * 15), // 15 minutes from now
     };
   }
@@ -17,7 +20,10 @@ export const getCookieOptions = (
   return {
     httpOnly: true,
     sameSite: 'strict',
-    secure: (process.env.PUBLIC_URL ?? '').includes('https://'),
+    secure:
+      process.env.NODE_ENV === 'development'
+        ? false
+        : (process.env.PUBLIC_URL ?? '').includes('https://'),
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2), // 2 days from now
   };
 };
