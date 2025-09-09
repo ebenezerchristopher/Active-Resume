@@ -2,13 +2,12 @@ import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import {
   authResponseSchema,
   RegisterDto,
-  registerSchema,
   UserWithSecrets,
 } from '@active-resume/dto';
 import { Response } from 'express';
 
 import { AuthService } from './auth.service';
-import { AuthResponse, LoginInput } from './entities';
+import { AuthResponse, LoginInput, MessageEntity } from './entities';
 import { RegisterInput } from './entities';
 import { payloadSchema } from './utils/payload';
 import { InternalServerErrorException, UseGuards } from '@nestjs/common';
@@ -17,6 +16,9 @@ import { ConfigService } from '@nestjs/config';
 import { getCookieOptions } from './utils/cookie';
 import { LocalGuard } from './guards/local.guard';
 import { User } from '../user/decorators/user.decorator';
+import { RefreshGuard } from './guards/refresh.guard';
+import { TwoFactorGuard } from './guards/two-factor.guard';
+import { Message } from '../shared/dto/message.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -99,5 +101,28 @@ export class AuthResolver {
     @Context() { res }: { res: Response }
   ): Promise<AuthResponse> {
     return this.handleAuthenticationResponse(user, res);
+  }
+
+  @Mutation(() => AuthResponse)
+  @UseGuards(RefreshGuard)
+  async refresh(
+    @User() user: UserWithSecrets,
+    @Context() { res }: { res: Response }
+  ): Promise<AuthResponse> {
+    return this.handleAuthenticationResponse(user, res, true);
+  }
+
+  @Mutation(() => MessageEntity)
+  @UseGuards(TwoFactorGuard)
+  async logout(
+    @User() user: UserWithSecrets,
+    @Context() { res }: { res: Response }
+  ): Promise<Message> {
+    await this.authService.setRefreshToken(user.email, null);
+
+    res.clearCookie('Authentication');
+    res.clearCookie('Refresh');
+
+    return { message: 'You have been logged out, tschüss!' };
   }
 }

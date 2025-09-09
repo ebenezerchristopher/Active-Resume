@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -90,6 +91,18 @@ export class AuthService {
         },
       },
     });
+  }
+
+  async validateRefreshToken(payload: Payload, token: string) {
+    const user = await this.userService.findOneById(payload.id);
+    const storedRefreshToken = user.secrets?.refreshToken;
+
+    if (!storedRefreshToken || storedRefreshToken !== token)
+      throw new ForbiddenException();
+
+    if (!user.twoFactorEnabled) return user;
+
+    if (payload.isTwoFactorAuth) return user;
   }
 
   async register(registerDto: RegisterDto): Promise<UserWithSecrets> {

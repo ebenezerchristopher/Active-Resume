@@ -7,6 +7,8 @@ import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { RefreshStrategy } from './strategy/refresh.strategy';
+import { TwoFactorStrategy } from './strategy/two-factor.strategy';
 
 @Module({})
 export class AuthModule {
@@ -14,7 +16,14 @@ export class AuthModule {
     return {
       module: AuthModule,
       imports: [PassportModule, JwtModule, UserModule],
-      providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],
+      providers: [
+        AuthService,
+        AuthResolver,
+        LocalStrategy,
+        JwtStrategy,
+        RefreshStrategy,
+        TwoFactorStrategy,
+      ],
       exports: [AuthService],
     };
   }
