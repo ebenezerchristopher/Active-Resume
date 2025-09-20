@@ -4,3 +4,4 @@ export * from "./scroll-area";
 export * from "./seperator";
 export * from "./popover";
 export * from "./command";
+export * from "./badge";

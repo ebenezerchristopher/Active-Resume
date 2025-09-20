@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Helmet } from "react-helmet-async";
+import { HeroSection } from "./sections/hero";
 
 export const HomePage = () => {
   const { i18n } = useLingui();
@@ -20,7 +21,7 @@ export const HomePage = () => {
         />
       </Helmet>
 
-      <div className="h-80">{t`Reactive Resume`}</div>
+      <HeroSection />
     </main>
   );
 };
