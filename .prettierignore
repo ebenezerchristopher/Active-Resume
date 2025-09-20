@@ -2,4 +2,7 @@
 /dist
 /coverage
 /.nx/cache
-/.nx/workspace-data
+stats.html
+pnpm-lock.yaml
+compose-dev.yml
+compose.yml

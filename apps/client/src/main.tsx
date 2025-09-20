@@ -1,16 +1,14 @@
-import { StrictMode } from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import * as ReactDOM from 'react-dom/client';
-import App from './app/app';
+import { StrictMode } from "react";
+import * as ReactDOM from "react-dom/client";
+import { RouterProvider } from "react-router";
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+import { router } from "./router";
+
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = ReactDOM.createRoot(document.querySelector("#root")!);
 
 root.render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>,
 );

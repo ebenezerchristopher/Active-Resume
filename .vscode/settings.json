@@ -1,3 +1,14 @@
 {
-  "nxConsole.nxWorkspacePath": ""
+  "css.validate": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+  "i18n-ally.localesPaths": [
+    "apps/client/src/locales"
+  ],
+  "prettier.configPath": ".prettierrc",
+  "prettier.prettierPath": "./node_modules/prettier",
+ 
 }

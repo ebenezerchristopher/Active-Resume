@@ -51,3 +51,6 @@ schema.gql
 # Lingui Compiled Messages
 apps/client/src/locales/_build/
 apps/client/src/locales/*/messages.*js
+
+vite.config.*.timestamp*
+vitest.config.*.timestamp*

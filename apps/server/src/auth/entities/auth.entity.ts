@@ -1,7 +1,7 @@
 import { Message } from './../../shared/dto/message.dto';
 import { ObjectType, Field } from '@nestjs/graphql';
 import { AuthResponseDto } from '@active-resume/dto';
-import { UserEntity } from '@/server/user/entities';
+import { UserEntity } from '@server/user/entities';
 
 @ObjectType()
 export class AuthResponse implements AuthResponseDto {
