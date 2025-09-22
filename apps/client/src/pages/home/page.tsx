@@ -2,6 +2,14 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Helmet } from "react-helmet-async";
 import { HeroSection } from "./sections/hero";
+import { LogoCloudSection } from "./sections/logo-cloud";
+import { StatisticsSection } from "./sections/statistics";
+import { FeaturesSection } from "./sections/features";
+import { TemplatesSection } from "./sections/templates";
+import { TestimonialsSection } from "./sections/testimonials";
+import { SupportSection } from "./sections/support";
+import { FAQSection } from "./sections/faq";
+import { ContributorsSection } from "./sections/contributors";
 
 export const HomePage = () => {
   const { i18n } = useLingui();
@@ -22,6 +30,14 @@ export const HomePage = () => {
       </Helmet>
 
       <HeroSection />
+      <LogoCloudSection />
+      <StatisticsSection />
+      <FeaturesSection />
+      <TemplatesSection />
+      <TestimonialsSection />
+      <SupportSection />
+      <FAQSection />
+      <ContributorsSection />
     </main>
   );
 };

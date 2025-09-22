@@ -5,3 +5,6 @@ export * from "./seperator";
 export * from "./popover";
 export * from "./command";
 export * from "./badge";
+export * from "./accordion";
+export * from "./tooltip";
+export * from "./avatar";

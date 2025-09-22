@@ -7,6 +7,7 @@ import { ConfigModule } from "./config/config.module";
 import { DatabaseModule } from "./database/database.module";
 import { UserModule } from "./user/user.module";
 import { TranslationModule } from "./translation/translation.module";
+import { ContributorsModule } from "./contributors/contributors.module";
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -24,6 +25,7 @@ import { TranslationModule } from "./translation/translation.module";
     ConfigModule,
     DatabaseModule,
     TranslationModule,
+    ContributorsModule,
   ],
   controllers: [],
   providers: [],
