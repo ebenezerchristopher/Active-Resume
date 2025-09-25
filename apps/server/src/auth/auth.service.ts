@@ -4,28 +4,28 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { LoginDto, RegisterDto, UserWithSecrets } from '@active-resume/dto';
-import { ErrorMessage } from '@active-resume/utils';
-import * as bcryptjs from 'bcryptjs';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { AuthProvidersDto, LoginDto, RegisterDto, UserWithSecrets } from "@active-resume/dto";
+import { ErrorMessage } from "@active-resume/utils";
+import * as bcryptjs from "bcryptjs";
 //import { Response } from "express";
 
-import { Config } from '../config/schema';
+import { Config } from "../config/schema";
 // MailService will be used in a later ticket for email verification
 // import { MailService } from "../mail/mail.service";
-import { UserService } from '../user/user.service';
+import { UserService } from "../user/user.service";
 //import { getCookieOptions } from "./utils/cookie";
-import { Payload } from './utils/payload';
+import { Payload } from "./utils/payload";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService<Config>,
     private readonly userService: UserService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   private hash(password: string): Promise<string> {
@@ -44,16 +44,16 @@ export class AuthService {
     }
   }
 
-  generateToken(grantType: 'access' | 'refresh', payload: Payload) {
-    if (grantType === 'access') {
+  generateToken(grantType: "access" | "refresh", payload: Payload) {
+    if (grantType === "access") {
       return this.jwtService.sign(payload, {
-        secret: this.configService.getOrThrow('ACCESS_TOKEN_SECRET'),
-        expiresIn: '15m',
+        secret: this.configService.getOrThrow("ACCESS_TOKEN_SECRET"),
+        expiresIn: "15m",
       });
     }
     return this.jwtService.sign(payload, {
-      secret: this.configService.getOrThrow('REFRESH_TOKEN_SECRET'),
-      expiresIn: '2d',
+      secret: this.configService.getOrThrow("REFRESH_TOKEN_SECRET"),
+      expiresIn: "2d",
     });
   }
 
@@ -65,9 +65,7 @@ export class AuthService {
 
   async authenticate({ identifier, password }: LoginDto) {
     try {
-      const user = await this.userService.findOneByIdentifierOrThrow(
-        identifier
-      );
+      const user = await this.userService.findOneByIdentifierOrThrow(identifier);
 
       if (!user.secrets?.password) {
         throw new BadRequestException(ErrorMessage.OAuthUser);
@@ -97,8 +95,7 @@ export class AuthService {
     const user = await this.userService.findOneById(payload.id);
     const storedRefreshToken = user.secrets?.refreshToken;
 
-    if (!storedRefreshToken || storedRefreshToken !== token)
-      throw new ForbiddenException();
+    if (!storedRefreshToken || storedRefreshToken !== token) throw new ForbiddenException();
 
     if (!user.twoFactorEnabled) return user;
 
@@ -114,7 +111,7 @@ export class AuthService {
         email: registerDto.email,
         username: registerDto.username,
         locale: registerDto.locale,
-        provider: 'email',
+        provider: "email",
         emailVerified: false,
         secrets: { create: { password: hashedPassword } },
       });
@@ -124,15 +121,51 @@ export class AuthService {
 
       return user;
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
         throw new BadRequestException(ErrorMessage.UserAlreadyExists);
       }
 
       Logger.error(error);
       throw new InternalServerErrorException(error);
     }
+  }
+
+  getAuthProviders() {
+    const providers: AuthProvidersDto = [];
+
+    if (!this.configService.get("DISABLE_EMAIL_AUTH")) {
+      providers.push("email");
+    }
+
+    if (
+      this.configService.get("GITHUB_CLIENT_ID") &&
+      this.configService.get("GITHUB_CLIENT_SECRET") &&
+      this.configService.get("GITHUB_CALLBACK_URL")
+    ) {
+      providers.push("github");
+    }
+
+    if (
+      this.configService.get("GOOGLE_CLIENT_ID") &&
+      this.configService.get("GOOGLE_CLIENT_SECRET") &&
+      this.configService.get("GOOGLE_CALLBACK_URL")
+    ) {
+      providers.push("google");
+    }
+
+    if (
+      this.configService.get("OPENID_AUTHORIZATION_URL") &&
+      this.configService.get("OPENID_CALLBACK_URL") &&
+      this.configService.get("OPENID_CLIENT_ID") &&
+      this.configService.get("OPENID_CLIENT_SECRET") &&
+      this.configService.get("OPENID_ISSUER") &&
+      this.configService.get("OPENID_SCOPE") &&
+      this.configService.get("OPENID_TOKEN_URL") &&
+      this.configService.get("OPENID_USER_INFO_URL")
+    ) {
+      providers.push("openid");
+    }
+
+    return providers;
   }
 }

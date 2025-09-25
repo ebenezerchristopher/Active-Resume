@@ -1,52 +1,41 @@
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
-import {
-  authResponseSchema,
-  RegisterDto,
-  UserWithSecrets,
-} from '@active-resume/dto';
-import { Response } from 'express';
+import { Args, Context, Mutation, Resolver, Query } from "@nestjs/graphql";
+import { authResponseSchema, RegisterDto, UserWithSecrets } from "@active-resume/dto";
+import { Response } from "express";
 
-import { AuthService } from './auth.service';
-import { AuthResponse, LoginInput, MessageEntity } from './entities';
-import { RegisterInput } from './entities';
-import { payloadSchema } from './utils/payload';
-import { InternalServerErrorException, UseGuards } from '@nestjs/common';
-import { ErrorMessage } from '@active-resume/utils';
-import { ConfigService } from '@nestjs/config';
-import { getCookieOptions } from './utils/cookie';
-import { LocalGuard } from './guards/local.guard';
-import { User } from '../user/decorators/user.decorator';
-import { RefreshGuard } from './guards/refresh.guard';
-import { TwoFactorGuard } from './guards/two-factor.guard';
-import { Message } from '../shared/dto/message.dto';
+import { AuthService } from "./auth.service";
+import { AuthProviders, AuthResponse, LoginInput, MessageEntity } from "./entities";
+import { RegisterInput } from "./entities";
+import { payloadSchema } from "./utils/payload";
+import { InternalServerErrorException, UseGuards } from "@nestjs/common";
+import { ErrorMessage } from "@active-resume/utils";
+import { ConfigService } from "@nestjs/config";
+import { getCookieOptions } from "./utils/cookie";
+import { LocalGuard } from "./guards/local.guard";
+import { User } from "../user/decorators/user.decorator";
+import { RefreshGuard } from "./guards/refresh.guard";
+import { TwoFactorGuard } from "./guards/two-factor.guard";
+import { Message } from "../shared/dto/message.dto";
 
 @Resolver()
 export class AuthResolver {
   constructor(
     private readonly authService: AuthService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {}
 
-  private async exchangeToken(
-    id: string,
-    email: string,
-    isTwoFactorAuth = false
-  ) {
+  private async exchangeToken(id: string, email: string, isTwoFactorAuth = false) {
     try {
       const payload = payloadSchema.parse({ id, isTwoFactorAuth });
 
-      const accessToken = this.authService.generateToken('access', payload);
-      const refreshToken = this.authService.generateToken('refresh', payload);
+      const accessToken = this.authService.generateToken("access", payload);
+      const refreshToken = this.authService.generateToken("refresh", payload);
 
       // Set Refresh Token in Database
       await this.authService.setRefreshToken(email, refreshToken);
 
       return { accessToken, refreshToken };
     } catch (error) {
-      throw new InternalServerErrorException(
-        error,
-        ErrorMessage.SomethingWentWrong
-      );
+      throw new InternalServerErrorException(error, ErrorMessage.SomethingWentWrong);
     }
   }
 
@@ -54,23 +43,23 @@ export class AuthResolver {
     user: UserWithSecrets,
     response: Response,
     isTwoFactorAuth = false,
-    redirect = false
+    redirect = false,
   ) {
-    let status = 'authenticated';
+    let status = "authenticated";
 
-    const baseUrl = this.configService.get('PUBLIC_URL');
+    const baseUrl = this.configService.get("PUBLIC_URL");
     const redirectUrl = new URL(`${baseUrl}/auth/callback`);
 
     const { accessToken, refreshToken } = await this.exchangeToken(
       user.id,
       user.email,
-      isTwoFactorAuth
+      isTwoFactorAuth,
     );
 
-    response.cookie('Authentication', accessToken, getCookieOptions('access'));
-    response.cookie('Refresh', refreshToken, getCookieOptions('refresh'));
+    response.cookie("Authentication", accessToken, getCookieOptions("access"));
+    response.cookie("Refresh", refreshToken, getCookieOptions("refresh"));
 
-    if (user.twoFactorEnabled && !isTwoFactorAuth) status = '2fa_required';
+    if (user.twoFactorEnabled && !isTwoFactorAuth) status = "2fa_required";
 
     const responseData = authResponseSchema.parse({ status, user });
 
@@ -84,8 +73,8 @@ export class AuthResolver {
 
   @Mutation(() => AuthResponse)
   async register(
-    @Args('data') data: RegisterInput,
-    @Context() { res }: { res: Response }
+    @Args("data") data: RegisterInput,
+    @Context() { res }: { res: Response },
   ): Promise<AuthResponse> {
     const user = await this.authService.register(data as RegisterDto);
 
@@ -96,9 +85,9 @@ export class AuthResolver {
   @UseGuards(LocalGuard)
   async login(
     // `data` is used by the guard via LocalGuard#getRequest
-    @Args('data') _data: LoginInput,
+    @Args("data") _data: LoginInput,
     @User() user: UserWithSecrets,
-    @Context() { res }: { res: Response }
+    @Context() { res }: { res: Response },
   ): Promise<AuthResponse> {
     return this.handleAuthenticationResponse(user, res);
   }
@@ -107,7 +96,7 @@ export class AuthResolver {
   @UseGuards(RefreshGuard)
   async refresh(
     @User() user: UserWithSecrets,
-    @Context() { res }: { res: Response }
+    @Context() { res }: { res: Response },
   ): Promise<AuthResponse> {
     return this.handleAuthenticationResponse(user, res, true);
   }
@@ -116,13 +105,18 @@ export class AuthResolver {
   @UseGuards(TwoFactorGuard)
   async logout(
     @User() user: UserWithSecrets,
-    @Context() { res }: { res: Response }
+    @Context() { res }: { res: Response },
   ): Promise<Message> {
     await this.authService.setRefreshToken(user.email, null);
 
-    res.clearCookie('Authentication');
-    res.clearCookie('Refresh');
+    res.clearCookie("Authentication");
+    res.clearCookie("Refresh");
 
-    return { message: 'You have been logged out, tschüss!' };
+    return { message: "You have been logged out, tschüss!" };
+  }
+
+  @Query(() => [AuthProviders])
+  async providers() {
+    return this.authService.getAuthProviders();
   }
 }

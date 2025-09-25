@@ -1,7 +1,7 @@
-import { createZodDto } from 'nestjs-zod/dto';
-import { z } from 'zod';
+import { createZodDto } from "nestjs-zod/dto";
+import { z } from "zod";
 
-import { userSchema } from '../user';
+import { userSchema } from "../user";
 
 export const registerSchema = userSchema
   .pick({ name: true, email: true, username: true, locale: true })

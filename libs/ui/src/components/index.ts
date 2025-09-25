@@ -8,3 +8,6 @@ export * from "./badge";
 export * from "./accordion";
 export * from "./tooltip";
 export * from "./avatar";
+export * from "./alert";
+export * from "./form";
+export * from "./input";
