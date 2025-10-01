@@ -20,10 +20,30 @@ export const axios = _axios.create({ baseURL: "/api", withCredentials: true });
 // Intercept responses to transform ISO dates to JS date objects
 axios.interceptors.response.use(
   (response) => {
+    // Check for GraphQL errors
+    if (response.data.errors) {
+      // const code = response.data.errors[0]?.extensions.originalError.statusCode;
+      const message = response.data.errors[0]?.message as ErrorMessage;
+
+      const description = translateError(message);
+
+      if (description) {
+        toast({
+          variant: "error",
+          title: t`Oops, the server returned an error.`,
+          description,
+        });
+      }
+
+      return Promise.reject(new Error(message));
+    }
+
     const transformedResponse = deepSearchAndParseDates(response.data, ["createdAt", "updatedAt"]);
     return { ...response, data: transformedResponse };
   },
+
   (error) => {
+    console.log("AXIOS ERROR", error);
     const message = error.response?.data.message as ErrorMessage;
     const description = translateError(message);
 

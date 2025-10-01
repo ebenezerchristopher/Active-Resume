@@ -19,6 +19,8 @@ import { Config } from "../config/schema";
 import { UserService } from "../user/user.service";
 //import { getCookieOptions } from "./utils/cookie";
 import { Payload } from "./utils/payload";
+import { randomBytes } from "node:crypto";
+import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class AuthService {
@@ -26,6 +28,7 @@ export class AuthService {
     private readonly configService: ConfigService<Config>,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   private hash(password: string): Promise<string> {
@@ -44,17 +47,26 @@ export class AuthService {
     }
   }
 
-  generateToken(grantType: "access" | "refresh", payload: Payload) {
-    if (grantType === "access") {
-      return this.jwtService.sign(payload, {
-        secret: this.configService.getOrThrow("ACCESS_TOKEN_SECRET"),
-        expiresIn: "15m",
-      });
+  generateToken(grantType: "access" | "refresh" | "reset" | "verification", payload?: Payload) {
+    switch (grantType) {
+      case "access": {
+        return this.jwtService.sign(payload, {
+          secret: this.configService.getOrThrow("ACCESS_TOKEN_SECRET"),
+          expiresIn: "15m",
+        });
+      }
+      case "refresh": {
+        return this.jwtService.sign(payload, {
+          secret: this.configService.getOrThrow("REFRESH_TOKEN_SECRET"),
+          expiresIn: "2d",
+        });
+      }
+
+      case "reset":
+      case "verification": {
+        return randomBytes(32).toString("base64url");
+      }
     }
-    return this.jwtService.sign(payload, {
-      secret: this.configService.getOrThrow("REFRESH_TOKEN_SECRET"),
-      expiresIn: "2d",
-    });
   }
 
   async setLastSignedIn(email: string) {
@@ -167,5 +179,31 @@ export class AuthService {
     }
 
     return providers;
+  }
+
+  // Password Reset Flows
+  async forgotPassword(email: string) {
+    const token = this.generateToken("reset");
+
+    await this.userService.updateByEmail(email, {
+      secrets: { update: { resetToken: token } },
+    });
+
+    const baseUrl = this.configService.get("PUBLIC_URL");
+    const url = `${baseUrl}/auth/reset-password?token=${token}`;
+    const subject = "Reset your Reactive Resume password";
+    const text = `Please click on the link below to reset your password:\n\n${url}`;
+
+    await this.mailService.sendEmail({ to: email, subject, text });
+    Logger.log(`Password reset email sent to ${email}`);
+  }
+
+  async resetPassword(token: string, password: string) {
+    const hashedPassword = await this.hash(password);
+
+    await this.userService.updateByResetToken(token, {
+      resetToken: null,
+      password: hashedPassword,
+    });
   }
 }

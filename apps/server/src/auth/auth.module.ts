@@ -1,21 +1,22 @@
-import { DynamicModule, Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
+import { DynamicModule, Module } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
 
-import { UserModule } from '../user/user.module';
-import { AuthResolver } from './auth.resolver';
-import { AuthService } from './auth.service';
-import { LocalStrategy } from './strategy/local.strategy';
-import { JwtStrategy } from './strategy/jwt.strategy';
-import { RefreshStrategy } from './strategy/refresh.strategy';
-import { TwoFactorStrategy } from './strategy/two-factor.strategy';
+import { UserModule } from "../user/user.module";
+import { AuthResolver } from "./auth.resolver";
+import { AuthService } from "./auth.service";
+import { LocalStrategy } from "./strategy/local.strategy";
+import { JwtStrategy } from "./strategy/jwt.strategy";
+import { RefreshStrategy } from "./strategy/refresh.strategy";
+import { TwoFactorStrategy } from "./strategy/two-factor.strategy";
+import { MailModule } from "../mail/mail.module";
 
 @Module({})
 export class AuthModule {
   static register(): DynamicModule {
     return {
       module: AuthModule,
-      imports: [PassportModule, JwtModule, UserModule],
+      imports: [PassportModule, JwtModule, UserModule, MailModule],
       providers: [
         AuthService,
         AuthResolver,

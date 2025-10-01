@@ -9,6 +9,7 @@ import { UserModule } from "./user/user.module";
 import { TranslationModule } from "./translation/translation.module";
 import { ContributorsModule } from "./contributors/contributors.module";
 import { FeatureModule } from "./feature/feature.module";
+import { MailModule } from "./mail/mail.module";
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -21,6 +22,10 @@ import { FeatureModule } from "./feature/feature.module";
       context: ({ req, res }) => ({ req, res }),
       path: "/api/graphql",
     }),
+
+    //core modules
+    MailModule,
+
     UserModule,
     AuthModule.register(),
     ConfigModule,

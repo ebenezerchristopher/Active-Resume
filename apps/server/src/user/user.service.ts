@@ -1,8 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
-import { UserWithSecrets } from '@active-resume/dto';
-import { ErrorMessage } from '@active-resume/utils';
-import { PrismaService } from 'nestjs-prisma';
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Prisma, User } from "@prisma/client";
+import { UserWithSecrets } from "@active-resume/dto";
+import { ErrorMessage } from "@active-resume/utils";
+import { PrismaService } from "nestjs-prisma";
 
 @Injectable()
 export class UserService {
@@ -21,18 +21,14 @@ export class UserService {
     return user;
   }
 
-  async findOneByIdentifier(
-    identifier: string
-  ): Promise<UserWithSecrets | null> {
+  async findOneByIdentifier(identifier: string): Promise<UserWithSecrets | null> {
     return this.prisma.user.findFirst({
       where: { OR: [{ email: identifier }, { username: identifier }] },
       include: { secrets: true },
     });
   }
 
-  async findOneByIdentifierOrThrow(
-    identifier: string
-  ): Promise<UserWithSecrets> {
+  async findOneByIdentifierOrThrow(identifier: string): Promise<UserWithSecrets> {
     return this.prisma.user.findFirstOrThrow({
       where: { OR: [{ email: identifier }, { username: identifier }] },
       include: { secrets: true },
@@ -43,11 +39,15 @@ export class UserService {
     return this.prisma.user.create({ data, include: { secrets: true } });
   }
 
-  updateByEmail(
-    email: string,
-    data: Prisma.UserUpdateArgs['data']
-  ): Promise<User> {
+  updateByEmail(email: string, data: Prisma.UserUpdateArgs["data"]): Promise<User> {
     return this.prisma.user.update({ where: { email }, data });
+  }
+
+  async updateByResetToken(
+    resetToken: string,
+    data: Prisma.SecretsUpdateArgs["data"],
+  ): Promise<void> {
+    await this.prisma.secrets.update({ where: { resetToken }, data });
   }
 
   async deleteOneById(id: string): Promise<void> {

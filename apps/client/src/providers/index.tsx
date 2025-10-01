@@ -6,6 +6,7 @@ import { queryClient } from "../libs/query-client";
 import { helmetContext } from "@client/constants/helmet";
 import { LocaleProvider } from "./locale";
 import { TooltipProvider } from "@active-resume/ui";
+import { Toaster } from "./toaster";
 
 export const Providers = () => (
   <LocaleProvider>
@@ -14,6 +15,7 @@ export const Providers = () => (
         <ThemeProvider>
           <TooltipProvider>
             <Outlet />
+            <Toaster />
           </TooltipProvider>
         </ThemeProvider>
       </QueryClientProvider>

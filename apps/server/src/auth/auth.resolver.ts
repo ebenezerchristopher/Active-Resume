@@ -3,10 +3,22 @@ import { authResponseSchema, RegisterDto, UserWithSecrets } from "@active-resume
 import { Response } from "express";
 
 import { AuthService } from "./auth.service";
-import { AuthProviders, AuthResponse, LoginInput, MessageEntity } from "./entities";
+import {
+  AuthProviders,
+  AuthResponse,
+  ForgotPasswordInput,
+  LoginInput,
+  MessageEntity,
+  ResetPasswordInput,
+} from "./entities";
 import { RegisterInput } from "./entities";
 import { payloadSchema } from "./utils/payload";
-import { InternalServerErrorException, UseGuards } from "@nestjs/common";
+import {
+  BadRequestException,
+  InternalServerErrorException,
+  Logger,
+  UseGuards,
+} from "@nestjs/common";
 import { ErrorMessage } from "@active-resume/utils";
 import { ConfigService } from "@nestjs/config";
 import { getCookieOptions } from "./utils/cookie";
@@ -118,5 +130,31 @@ export class AuthResolver {
   @Query(() => [AuthProviders])
   async providers() {
     return this.authService.getAuthProviders();
+  }
+
+  @Mutation(() => MessageEntity)
+  async forgotPassword(@Args("data") data: ForgotPasswordInput) {
+    try {
+      await this.authService.forgotPassword(data.email);
+    } catch (e) {
+      // pass
+      Logger.error(e);
+    }
+
+    return {
+      message:
+        "A password reset link should have been sent to your inbox, if an account existed with the email you provided.",
+    };
+  }
+
+  @Mutation(() => MessageEntity)
+  async resetPassword(@Args("data") data: ResetPasswordInput) {
+    try {
+      await this.authService.resetPassword(data.token, data.password);
+
+      return { message: "Your password has been successfully reset." };
+    } catch {
+      throw new BadRequestException(ErrorMessage.InvalidResetToken);
+    }
   }
 }
