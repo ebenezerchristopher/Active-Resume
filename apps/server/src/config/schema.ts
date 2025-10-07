@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const configSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production']).default('production'),
+  NODE_ENV: z.enum(["development", "production"]).default("production"),
 
   // Ports
   PORT: z.coerce.number().default(3000),
@@ -9,9 +9,10 @@ export const configSchema = z.object({
   // URLs
   PUBLIC_URL: z.url(),
   STORAGE_URL: z.url(),
+  TUNNEL_URL: z.url().optional(),
 
   // Database (Prisma)
-  DATABASE_URL: z.url().startsWith('postgresql://'),
+  DATABASE_URL: z.url().startsWith("postgresql://"),
 
   // Authentication Secrets
   ACCESS_TOKEN_SECRET: z.string(),
@@ -22,32 +23,32 @@ export const configSchema = z.object({
   CHROME_URL: z.url(),
   CHROME_IGNORE_HTTPS_ERRORS: z
     .string()
-    .default('false')
-    .transform((s) => s !== 'false' && s !== '0'),
+    .default("false")
+    .transform((s) => s !== "false" && s !== "0"),
 
   // Mail Server
-  MAIL_FROM: z.string().includes('@').optional().default('noreply@localhost'),
+  MAIL_FROM: z.string().includes("@").optional().default("noreply@localhost"),
   SMTP_URL: z
 
     .url()
-    .refine((url) => url.startsWith('smtp://') || url.startsWith('smtps://'))
+    .refine((url) => url.startsWith("smtp://") || url.startsWith("smtps://"))
     .optional(),
 
   // Storage
   STORAGE_ENDPOINT: z.string(),
   STORAGE_PORT: z.coerce.number(),
-  STORAGE_REGION: z.string().default('us-east-1'),
+  STORAGE_REGION: z.string().default("us-east-1"),
   STORAGE_BUCKET: z.string(),
   STORAGE_ACCESS_KEY: z.string(),
   STORAGE_SECRET_KEY: z.string(),
   STORAGE_USE_SSL: z
     .string()
-    .default('false')
-    .transform((s) => s !== 'false' && s !== '0'),
+    .default("false")
+    .transform((s) => s !== "false" && s !== "0"),
   STORAGE_SKIP_BUCKET_CHECK: z
     .string()
-    .default('false')
-    .transform((s) => s !== 'false' && s !== '0'),
+    .default("false")
+    .transform((s) => s !== "false" && s !== "0"),
 
   // Crowdin (Optional)
   CROWDIN_PROJECT_ID: z.coerce.number().optional(),
@@ -56,12 +57,12 @@ export const configSchema = z.object({
   // Feature Flags (Optional)
   DISABLE_SIGNUPS: z
     .string()
-    .default('false')
-    .transform((s) => s !== 'false' && s !== '0'),
+    .default("false")
+    .transform((s) => s !== "false" && s !== "0"),
   DISABLE_EMAIL_AUTH: z
     .string()
-    .default('false')
-    .transform((s) => s !== 'false' && s !== '0'),
+    .default("false")
+    .transform((s) => s !== "false" && s !== "0"),
 
   // GitHub (OAuth, Optional)
   GITHUB_CLIENT_ID: z.string().optional(),

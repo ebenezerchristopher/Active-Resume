@@ -22,17 +22,47 @@ export class UserService {
   }
 
   async findOneByIdentifier(identifier: string): Promise<UserWithSecrets | null> {
-    return this.prisma.user.findFirst({
-      where: { OR: [{ email: identifier }, { username: identifier }] },
-      include: { secrets: true },
-    });
+    const user = await (async (identifier: string) => {
+      // First, find the user by email
+      const user = await this.prisma.user.findUnique({
+        where: { email: identifier },
+        include: { secrets: true },
+      });
+
+      // If the user exists, return it
+      if (user) return user;
+
+      // Otherwise, find the user by username
+      // If the user doesn't exist, throw an error
+      return this.prisma.user.findUnique({
+        where: { username: identifier },
+        include: { secrets: true },
+      });
+    })(identifier);
+
+    return user;
   }
 
   async findOneByIdentifierOrThrow(identifier: string): Promise<UserWithSecrets> {
-    return this.prisma.user.findFirstOrThrow({
-      where: { OR: [{ email: identifier }, { username: identifier }] },
-      include: { secrets: true },
-    });
+    const user = await (async (identifier: string) => {
+      // First, find the user by email
+      const user = await this.prisma.user.findUnique({
+        where: { email: identifier },
+        include: { secrets: true },
+      });
+
+      // If the user exists, return it
+      if (user) return user;
+
+      // Otherwise, find the user by username
+      // If the user doesn't exist, throw an error
+      return this.prisma.user.findUniqueOrThrow({
+        where: { username: identifier },
+        include: { secrets: true },
+      });
+    })(identifier);
+
+    return user;
   }
 
   create(data: Prisma.UserCreateInput): Promise<UserWithSecrets> {

@@ -1,30 +1,29 @@
-import { idSchema } from '@active-resume/schema';
-import { dateSchema } from '@active-resume/utils';
-import { createZodDto } from 'nestjs-zod/dto';
-import { z } from 'zod';
+import { idSchema } from "@active-resume/schema";
+import { dateSchema } from "@active-resume/utils";
+import { createZodDto } from "nestjs-zod/dto";
+import { z } from "zod";
 
-import { secretsSchema } from '../secrets';
+import { secretsSchema } from "../secrets";
 
 export const usernameSchema = z
   .string()
   .min(3)
   .max(255)
   .regex(/^[\w.-]+$/, {
-    message:
-      'Usernames can only contain letters, numbers, periods, hyphens, and underscores.',
+    message: "Usernames can only contain letters, numbers, periods, hyphens, and underscores.",
   })
   .transform((value) => value.toLowerCase());
 
 export const userSchema = z.object({
   id: idSchema,
   name: z.string().min(1).max(255),
-  picture: z.literal('').or(z.null()).or(z.url()),
+  picture: z.literal("").or(z.null()).or(z.url()),
   username: usernameSchema,
   email: z.email().transform((value) => value.toLowerCase()),
-  locale: z.string().default('en-US'),
+  locale: z.string().default("en-US"),
   emailVerified: z.boolean().default(false),
   twoFactorEnabled: z.boolean().default(false),
-  provider: z.enum(['email', 'github', 'google', 'openid']).default('email'),
+  provider: z.enum(["email", "github", "google", "openid"]).default("email"),
   createdAt: dateSchema,
   updatedAt: dateSchema,
 });

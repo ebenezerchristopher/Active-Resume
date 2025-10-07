@@ -1,7 +1,7 @@
-import { UserDto } from '@active-resume/dto';
-import { ObjectType, Field } from '@nestjs/graphql';
+import { UserDto } from "@active-resume/dto";
+import { ObjectType, Field } from "@nestjs/graphql";
 
-@ObjectType('UserEntity')
+@ObjectType("UserEntity")
 export class UserEntity implements UserDto {
   @Field()
   id: string;
@@ -16,7 +16,7 @@ export class UserEntity implements UserDto {
   username?: string;
 
   @Field()
-  email?: string;
+  email: string;
 
   @Field()
   emailVerified: boolean;
@@ -25,7 +25,7 @@ export class UserEntity implements UserDto {
   twoFactorEnabled: boolean;
 
   @Field()
-  provider: 'email' | 'github' | 'google' | 'openid';
+  provider: "email" | "github" | "google" | "openid";
 
   @Field(() => String, { nullable: true })
   picture?: string | null;

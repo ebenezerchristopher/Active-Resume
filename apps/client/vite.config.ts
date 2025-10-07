@@ -5,6 +5,9 @@ import react from "@vitejs/plugin-react";
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
 
+// used to keep the websocket alive when tunelling with ngrok
+const HMR_HOST = process.env.HMR_HOST || "polished-quagga-golden.ngrok-free.app";
+
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/client",
@@ -14,10 +17,27 @@ export default defineConfig(() => ({
   server: {
     port: 4200,
     host: "localhost",
+    hmr: {
+      host: HMR_HOST,
+      protocol: "wss",
+    },
+    allowedHosts: ["polished-quagga-golden.ngrok-free.app"],
+    cors: process.env.NODE_ENV === "development" ? true : { origin: false },
     proxy: {
       "/api": {
         target: "http://localhost:7000",
         secure: false,
+        configure: (proxy, _options) => {
+          proxy.on("proxyReq", (proxyReq, req, _res) => {
+            console.log("Sending Request to Target:", req.method, req.url);
+          });
+          proxy.on("proxyRes", (proxyRes, req, _res) => {
+            console.log("Received Response from Target:", proxyRes.statusCode, req.url);
+          });
+          proxy.on("error", (err, _req, _res) => {
+            console.error("Proxy Error:", err);
+          });
+        },
       },
       "/artboard": {
         target: "http://localhost:6200",

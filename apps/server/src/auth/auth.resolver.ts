@@ -55,12 +55,8 @@ export class AuthResolver {
     user: UserWithSecrets,
     response: Response,
     isTwoFactorAuth = false,
-    redirect = false,
   ) {
     let status = "authenticated";
-
-    const baseUrl = this.configService.get("PUBLIC_URL");
-    const redirectUrl = new URL(`${baseUrl}/auth/callback`);
 
     const { accessToken, refreshToken } = await this.exchangeToken(
       user.id,
@@ -75,12 +71,7 @@ export class AuthResolver {
 
     const responseData = authResponseSchema.parse({ status, user });
 
-    return responseData;
-
-    // cant do this because apollo also tries to send a response
-    //redirectUrl.searchParams.set('status', status);
-    //if (redirect) response.redirect(redirectUrl.toString());
-    // else response.status(200).send(responseData);
+    return responseData as AuthResponse;
   }
 
   @Mutation(() => AuthResponse)

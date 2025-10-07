@@ -12,9 +12,6 @@ import { toast } from "../hooks/use-toast";
 import { translateError } from "../services/errors/translate-error";
 import { queryClient } from "./query-client";
 
-//const PREFIX = "/api";
-//const APIURL = `${import.meta.env.VITE_PUBLIC_URL}`;
-
 export const axios = _axios.create({ baseURL: "/api", withCredentials: true });
 
 // Intercept responses to transform ISO dates to JS date objects

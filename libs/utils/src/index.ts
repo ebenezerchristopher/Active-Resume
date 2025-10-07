@@ -4,3 +4,4 @@ export * from "./namespaces/style";
 export * from "./namespaces/language";
 export * from "./namespaces/graphql";
 export * from "./namespaces/template";
+export * from "./namespaces/string";

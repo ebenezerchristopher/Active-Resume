@@ -9,6 +9,7 @@ import { RegisterPage } from "@client/pages/auth/register/page";
 import { LoginPage } from "@client/pages/auth/login/page";
 import { ForgotPasswordPage } from "../pages/auth/forgot-password/page";
 import { ResetPasswordPage } from "../pages/auth/reset-password/page";
+import { authLoader } from "./loaders/auth";
 
 export const routes = createRoutesFromElements(
   <Route element={<Providers />} errorElement={<ErrorPage />}>
@@ -28,6 +29,9 @@ export const routes = createRoutesFromElements(
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
         </Route>
+
+        {/* OAuth Callback */}
+        <Route path="callback" loader={authLoader} element={<div />} />
       </Route>
     </Route>
   </Route>,

@@ -1,17 +1,26 @@
 import type { UserDto } from "@active-resume/dto";
 import { useQuery } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
 import { useEffect } from "react";
 
 import { axios } from "@client/libs/axios";
 import { useAuthStore } from "@client/stores/auth";
+import { GraphQLResponse } from "@active-resume/utils";
 
 export const fetchUser = async () => {
-  const response = await axios.get<UserDto | undefined, AxiosResponse<UserDto | undefined>>(
-    "/user/me",
-  );
+  const response = await axios.post<GraphQLResponse<UserDto>>("/graphql", {
+    query: `
+        query {
+          me {
+            id
+            email
+            username
+            name
+            locale
+          }
+        }`,
+  });
 
-  return response.data;
+  return response.data.data?.me;
 };
 
 export const useUser = () => {
