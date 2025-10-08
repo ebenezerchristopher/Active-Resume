@@ -9,6 +9,7 @@ import { ErrorMessage } from "@active-resume/utils";
 import { payloadSchema } from "./utils/payload";
 import { getCookieOptions } from "./utils/cookie";
 import { Response } from "express";
+import { GitHubGuard } from "./guards/github.guard";
 
 @ApiTags("Authentication")
 @Controller("auth")
@@ -63,6 +64,7 @@ export class AuthController {
     if (redirect) response.redirect(redirectUrl.toString());
   }
 
+  // OAuth2 Routes
   @ApiTags("OAuth", "Google")
   @Get("google")
   @UseGuards(GoogleGuard)
@@ -74,6 +76,23 @@ export class AuthController {
   @Get("google/callback")
   @UseGuards(GoogleGuard)
   async googleCallback(
+    @restUser() user: UserWithSecrets,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.handleAuthenticationResponse(user, response, false, true);
+  }
+
+  @ApiTags("OAuth", "GitHub")
+  @Get("github")
+  @UseGuards(GitHubGuard)
+  githubLogin() {
+    return;
+  }
+
+  @ApiTags("OAuth", "GitHub")
+  @Get("github/callback")
+  @UseGuards(GitHubGuard)
+  async githubCallback(
     @restUser() user: UserWithSecrets,
     @Res({ passthrough: true }) response: Response,
   ) {

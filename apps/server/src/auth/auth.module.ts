@@ -16,6 +16,7 @@ import { ConfigService } from "@nestjs/config";
 import { UserService } from "@server/user/user.service";
 import { Config } from "@server/config/schema";
 import { DummyStrategy } from "./strategy/dummy.strategy";
+import { GitHubStrategy } from "./strategy/github.strategy";
 
 @Module({})
 export class AuthModule {
@@ -31,6 +32,23 @@ export class AuthModule {
         JwtStrategy,
         RefreshStrategy,
         TwoFactorStrategy,
+
+        //OAuth2 Strategies
+        {
+          provide: GitHubStrategy,
+          inject: [ConfigService, UserService],
+          useFactory: (configService: ConfigService<Config>, userService: UserService) => {
+            try {
+              const clientID = configService.getOrThrow("GITHUB_CLIENT_ID");
+              const clientSecret = configService.getOrThrow("GITHUB_CLIENT_SECRET");
+              const callbackURL = configService.getOrThrow("GITHUB_CALLBACK_URL");
+
+              return new GitHubStrategy(clientID, clientSecret, callbackURL, userService);
+            } catch {
+              return new DummyStrategy();
+            }
+          },
+        },
         {
           provide: GoogleStrategy,
           inject: [ConfigService, UserService],
