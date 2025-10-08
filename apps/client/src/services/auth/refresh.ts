@@ -1,8 +1,21 @@
-import type { MessageDto } from "@active-resume/dto";
-import type { AxiosInstance, AxiosResponse } from "axios";
+import type { AuthResponseDto } from "@active-resume/dto";
+import { GraphQLResponse } from "@active-resume/utils";
+import type { AxiosInstance } from "axios";
 
 export const refreshToken = async (axios: AxiosInstance) => {
-  const response = await axios.post<MessageDto, AxiosResponse<MessageDto>>("/auth/refresh");
+  const response = await axios.post<GraphQLResponse<AuthResponseDto>>("/graphql", {
+    query: `
+      mutation {
+        refresh {
+          status
+          user {
+            id
+            email
+            name
+            username
+            locale
+            provider}}}`,
+  });
 
-  return response.data;
+  return response.data.data?.refresh;
 };

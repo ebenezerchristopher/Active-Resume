@@ -7,17 +7,20 @@ import { helmetContext } from "@client/constants/helmet";
 import { LocaleProvider } from "./locale";
 import { TooltipProvider } from "@active-resume/ui";
 import { Toaster } from "./toaster";
+import { AuthRefreshProvider } from "./auth-refresh";
 
 export const Providers = () => (
   <LocaleProvider>
     <HelmetProvider context={helmetContext}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <TooltipProvider>
-            <Outlet />
-            <Toaster />
-          </TooltipProvider>
-        </ThemeProvider>
+        <AuthRefreshProvider>
+          <ThemeProvider>
+            <TooltipProvider>
+              <Outlet />
+              <Toaster />
+            </TooltipProvider>
+          </ThemeProvider>
+        </AuthRefreshProvider>
       </QueryClientProvider>
     </HelmetProvider>
   </LocaleProvider>
