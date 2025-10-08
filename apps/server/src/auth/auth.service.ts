@@ -190,7 +190,10 @@ export class AuthService {
     });
 
     const baseUrl = this.configService.get("PUBLIC_URL");
-    const url = `${baseUrl}/auth/reset-password?token=${token}`;
+    const tunnelUrl = this.configService.get("TUNNEL_URL");
+    const url = tunnelUrl
+      ? `${tunnelUrl}/auth/reset-password?token=${token}`
+      : `${baseUrl}/auth/reset-password?token=${token}`;
     const subject = "Reset your Reactive Resume password";
     const text = `Please click on the link below to reset your password:\n\n${url}`;
 
@@ -204,6 +207,46 @@ export class AuthService {
     await this.userService.updateByResetToken(token, {
       resetToken: null,
       password: hashedPassword,
+    });
+  }
+
+  // Email Verification Flows
+  async sendVerificationEmail(email: string) {
+    try {
+      const token = this.generateToken("verification");
+
+      // Set the verification token in the database
+      await this.userService.updateByEmail(email, {
+        secrets: { update: { verificationToken: token } },
+      });
+
+      const baseUrl = this.configService.get("PUBLIC_URL");
+      const tunnelUrl = this.configService.get("TUNNEL_URL");
+      const url = tunnelUrl
+        ? `${tunnelUrl}/auth/verify-email?token=${token}`
+        : `${baseUrl}/auth/verify-email?token=${token}`;
+      const subject = "Verify your email address";
+      const text = `Please verify your email address by clicking on the link below:\n\n${url}`;
+
+      await this.mailService.sendEmail({ to: email, subject, text });
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async verifyEmail(id: string, token: string) {
+    const user = await this.userService.findOneById(id);
+
+    const storedToken = user.secrets?.verificationToken;
+
+    if (!storedToken || storedToken !== token) {
+      throw new BadRequestException(ErrorMessage.InvalidVerificationToken);
+    }
+
+    await this.userService.updateByEmail(user.email, {
+      emailVerified: true,
+      secrets: { update: { verificationToken: null } },
     });
   }
 }

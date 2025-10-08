@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from "@nestjs/common";
+import { DynamicModule, forwardRef, Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 
@@ -13,17 +13,17 @@ import { MailModule } from "../mail/mail.module";
 import { AuthController } from "./auth.controller";
 import { GoogleStrategy } from "./strategy/google.strategy";
 import { ConfigService } from "@nestjs/config";
-import { UserService } from "@server/user/user.service";
 import { Config } from "@server/config/schema";
 import { DummyStrategy } from "./strategy/dummy.strategy";
 import { GitHubStrategy } from "./strategy/github.strategy";
+import { UserService } from "@server/user/user.service";
 
 @Module({})
 export class AuthModule {
   static register(): DynamicModule {
     return {
       module: AuthModule,
-      imports: [PassportModule, JwtModule, UserModule, MailModule],
+      imports: [PassportModule, JwtModule, forwardRef(() => UserModule), MailModule],
       controllers: [AuthController],
       providers: [
         AuthService,

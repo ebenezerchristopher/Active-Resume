@@ -1,17 +1,26 @@
 import type { UpdateUserDto, UserDto } from "@active-resume/dto";
 import { useMutation } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
-
 import { axios } from "@client/libs/axios";
 import { queryClient } from "@client/libs/query-client";
+import { GraphQLResponse } from "@active-resume/utils";
 
 export const updateUser = async (data: UpdateUserDto) => {
-  const response = await axios.patch<UserDto, AxiosResponse<UserDto>, UpdateUserDto>(
-    "/user/me",
-    data,
-  );
+  const response = await axios.post<GraphQLResponse<UserDto>>("/graphql", {
+    query: `
+    mutation ($data: UpdateUserInput!) {
+      updateMe(data: $data) {
+        id,
+        email,
+        name,
+        username,
+        locale,
+        picture,}
+      }
+     `,
+    variables: { data },
+  });
 
-  return response.data;
+  return response.data.data?.updateMe;
 };
 
 export const useUpdateUser = () => {

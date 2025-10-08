@@ -25,16 +25,17 @@ import { MailModule } from "./mail/mail.module";
 
     //core modules
     MailModule,
-
-    UserModule,
-    AuthModule.register(),
     ConfigModule,
     DatabaseModule,
+
+    //feature modules
+    AuthModule.register(),
+    UserModule,
     TranslationModule,
     ContributorsModule,
     FeatureModule,
   ],
-  controllers: [],
+
   providers: [],
 })
 export class AppModule {}
