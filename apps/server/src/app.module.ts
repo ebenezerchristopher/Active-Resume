@@ -10,6 +10,8 @@ import { TranslationModule } from "./translation/translation.module";
 import { ContributorsModule } from "./contributors/contributors.module";
 import { FeatureModule } from "./feature/feature.module";
 import { MailModule } from "./mail/mail.module";
+import { StorageModule } from "./storage/storage.module";
+
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -34,6 +36,7 @@ import { MailModule } from "./mail/mail.module";
     TranslationModule,
     ContributorsModule,
     FeatureModule,
+    StorageModule,
   ],
 
   providers: [],

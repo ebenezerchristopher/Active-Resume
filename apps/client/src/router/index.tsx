@@ -10,6 +10,9 @@ import { LoginPage } from "@client/pages/auth/login/page";
 import { ForgotPasswordPage } from "../pages/auth/forgot-password/page";
 import { ResetPasswordPage } from "../pages/auth/reset-password/page";
 import { authLoader } from "./loaders/auth";
+import { AuthGuard } from "./gaurds/auth";
+import { DashboardLayout } from "../pages/dashboard/layout";
+import { SettingsPage } from "../pages/dashboard/settings/page";
 
 export const routes = createRoutesFromElements(
   <Route element={<Providers />} errorElement={<ErrorPage />}>
@@ -32,6 +35,14 @@ export const routes = createRoutesFromElements(
 
         {/* OAuth Callback */}
         <Route path="callback" loader={authLoader} element={<div />} />
+      </Route>
+      <Route index element={<Navigate replace to="/auth/login" />} />
+    </Route>
+    <Route path="dashboard">
+      <Route element={<AuthGuard />}>
+        <Route element={<DashboardLayout />}>
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
       </Route>
     </Route>
   </Route>,

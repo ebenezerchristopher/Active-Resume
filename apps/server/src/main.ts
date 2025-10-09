@@ -6,6 +6,7 @@ import { Config } from "./config/schema";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { graphqlUploadExpress } from "graphql-upload-ts";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -16,6 +17,9 @@ async function bootstrap() {
 
   const publicUrl = configService.getOrThrow("PUBLIC_URL");
   const isHTTPS = publicUrl.startsWith("https://") ?? false;
+
+  // GraphQL Upload Middleware
+  app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
 
   // Cookie Parser
   app.use(cookieParser());

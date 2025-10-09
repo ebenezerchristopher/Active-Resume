@@ -148,4 +148,21 @@ export class AuthResolver {
       throw new BadRequestException(ErrorMessage.InvalidResetToken);
     }
   }
+
+  @Mutation(() => MessageEntity, { name: "reverifyEmail" })
+  @UseGuards(TwoFactorGuard)
+  async resendVerificationEmail(
+    @User("email") email: string,
+    @User("emailVerified") emailVerified: boolean,
+  ) {
+    if (emailVerified) {
+      throw new BadRequestException(ErrorMessage.EmailAlreadyVerified);
+    }
+
+    await this.authService.sendVerificationEmail(email);
+
+    return {
+      message: "You should have received a new email with a link to verify your email address.",
+    };
+  }
 }

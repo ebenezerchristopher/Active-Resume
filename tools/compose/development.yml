@@ -1,6 +1,7 @@
 services:
   # Database (Postgres)
   postgres:
+    container_name: active-resume-postgres-1
     image: postgres:16-alpine
     restart: unless-stopped
     ports:
@@ -12,14 +13,45 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}',
-        ]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  # Adminer (for database management)
+  # adminer:
+  #  container_name: active-resume-adminer
+  # image: shyim/adminerevo:latest
+  #restart: unless-stopped
+  #depends_on:
+  # postgres:
+  #  condition: service_healthy
+  # ports:
+  #  - 4444:8080
+  # environment:
+  #  ADMINER_DEFAULT_DRIVER: pgsql
+  # ADMINER_DEFAULT_SERVER: postgres
+  # ADMINER_DEFAULT_USER: ${POSTGRES_USER:-postgres}
+  # ADMINER_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+  # ADMINER_DEFAULT_DB: ${POSTGRES_DB:-postgres}
+
+  # Storage (for image uploads)
+  minio:
+    container_name: active-resume-minio
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data
+    ports:
+      - ${STORAGE_PORT:-9500}:9000
+      - "9005:9001" # Minio Console (Optional)
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ADDRESS: :9000
+      MINIO_CONSOLE_ADDRESS: :9001
+      MINIO_ROOT_USER: ${STORAGE_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${STORAGE_SECRET_KEY:-minioadmin}
+
 volumes:
+  minio_data:
   postgres_data:

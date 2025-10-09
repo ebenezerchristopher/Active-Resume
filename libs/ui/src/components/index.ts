@@ -11,3 +11,6 @@ export * from "./avatar";
 export * from "./alert";
 export * from "./form";
 export * from "./input";
+export * from "./sheet";
+export * from "./shortcut";
+export * from "./dropdown-menu";
