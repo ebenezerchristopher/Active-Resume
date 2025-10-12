@@ -6,7 +6,7 @@ import { MinioModule } from "nestjs-minio-client";
 import { Config } from "../config/schema";
 import { StorageResolver } from "./storage.resolver";
 import { StorageService } from "./storage.service";
-import { UploadScalar } from "./dto/upload.scalar";
+import { UploadScalar } from "./entities/storage.entity";
 
 @Module({
   imports: [

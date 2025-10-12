@@ -180,8 +180,40 @@ export class StorageService implements OnModuleInit {
       );
     }
   }
+}
 
-  /*
+/*
+  async uploadFile(
+    userId: string,
+    upload: Promise<{ files: any[]; fields: Record<string, unknown> }>,
+  ): Promise<string> {
+    const { files } = await upload;
+    if (!files || files.length === 0) {
+      throw new InternalServerErrorException("No file uploaded.");
+    }
+    const file = files[0]; // Assuming single file upload for now
+
+    const { createReadStream, filename, mimetype } = file;
+    const stream = createReadStream();
+    const buffer = await new Promise<Buffer>((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      stream.on("data", (chunk: Buffer) => chunks.push(chunk));
+      stream.on("error", reject);
+      stream.on("end", () => resolve(Buffer.concat(chunks)));
+    });
+
+    let type: UploadType;
+    if (mimetype.startsWith("image/")) {
+      type = "pictures";
+    } else if (mimetype === "application/pdf") {
+      type = "resumes";
+    } else {
+      throw new InternalServerErrorException("Unsupported file type.");
+    }
+
+    return this.uploadObject(userId, type, buffer, filename);
+  }
+  */ /*
   async uploadFile(
     userId: string,
     upload: Promise<{ files: any[]; fields: Record<string, unknown> }>,
@@ -213,4 +245,3 @@ export class StorageService implements OnModuleInit {
     return this.uploadObject(userId, type, buffer, filename);
   }
   */
-}

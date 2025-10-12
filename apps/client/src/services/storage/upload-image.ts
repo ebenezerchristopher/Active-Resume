@@ -2,14 +2,15 @@ import { useMutation } from "@tanstack/react-query";
 import { axios } from "@client/libs/axios";
 import { GraphQLResponse } from "@active-resume/utils";
 
+/**
+ * Uploads an image using the GraphQL multipart request specification.
+ * This specification describes how to send files to a GraphQL server using multipart/form-data.
+ *
+ * @see https://github.com/jaydenseric/graphql-multipart-request-spec
+ */
 export const uploadImage = (file: File) => {
   const formData = new FormData();
-  /**
-   * Uploads an image using the GraphQL multipart request specification.
-   * This specification describes how to send files to a GraphQL server using multipart/form-data.
-   *
-   * @see https://github.com/jaydenseric/graphql-multipart-request-spec
-   */
+
   const mutation = `
       mutation ($file: Upload!) {
          image(file: $file)

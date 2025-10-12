@@ -1,7 +1,20 @@
-import { ObjectType, Field, Int } from "@nestjs/graphql";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Scalar } from "@nestjs/graphql";
+import { GraphQLUpload } from "graphql-upload-ts";
 
-@ObjectType()
-export class Storage {
-  @Field(() => Int, { description: "Example field (placeholder)" })
-  exampleField: number;
+@Scalar("Upload")
+export class UploadScalar {
+  description = "Upload custom scalar type";
+
+  parseValue(value: any) {
+    return GraphQLUpload.parseValue(value);
+  }
+
+  serialize(value: any) {
+    return GraphQLUpload.serialize(value);
+  }
+
+  parseLiteral(ast: any) {
+    return GraphQLUpload.parseLiteral(ast, ast.value);
+  }
 }

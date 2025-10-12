@@ -3,7 +3,7 @@ import { StorageService } from "./storage.service";
 import { BadRequestException, Logger, UseGuards } from "@nestjs/common";
 import { TwoFactorGuard } from "@server/auth/guards/two-factor.guard";
 import { User } from "@server/user/decorators/user.decorator";
-import { UploadScalar } from "./dto/upload.scalar";
+import { UploadScalar } from "./entities/storage.entity";
 import { FileUpload } from "graphql-upload-ts";
 import { buffer } from "node:stream/consumers";
 

@@ -125,7 +125,7 @@ export const AccountSettings = () => {
                   <FormMessage />
                 </FormItem>
 
-                {!user.picture && (
+                {
                   <>
                     <input ref={inputRef} hidden type="file" onChange={onSelectImage} />
 
@@ -140,7 +140,7 @@ export const AccountSettings = () => {
                       <UploadSimpleIcon />
                     </motion.button>
                   </>
-                )}
+                }
               </div>
             )}
           />
