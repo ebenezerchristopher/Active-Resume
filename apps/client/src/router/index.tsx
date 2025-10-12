@@ -13,6 +13,7 @@ import { authLoader } from "./loaders/auth";
 import { AuthGuard } from "./gaurds/auth";
 import { DashboardLayout } from "../pages/dashboard/layout";
 import { SettingsPage } from "../pages/dashboard/settings/page";
+import { VerifyEmailPage } from "../pages/auth/verify-email/page";
 
 export const routes = createRoutesFromElements(
   <Route element={<Providers />} errorElement={<ErrorPage />}>
@@ -31,6 +32,11 @@ export const routes = createRoutesFromElements(
         <Route element={<GuestGuard />}>
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
+        </Route>
+
+        {/* Email Verification */}
+        <Route element={<AuthGuard />}>
+          <Route path="verify-email" element={<VerifyEmailPage />} />
         </Route>
 
         {/* OAuth Callback */}

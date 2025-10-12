@@ -1,6 +1,6 @@
 import { Args, Context, Mutation, Resolver, Query } from "@nestjs/graphql";
 import { authResponseSchema, RegisterDto, UserWithSecrets } from "@active-resume/dto";
-import { Response } from "express";
+import { Request, Response } from "express";
 
 import { AuthService } from "./auth.service";
 import {
@@ -147,6 +147,26 @@ export class AuthResolver {
     } catch {
       throw new BadRequestException(ErrorMessage.InvalidResetToken);
     }
+  }
+
+  @Mutation(() => MessageEntity)
+  @UseGuards(TwoFactorGuard)
+  async verifyEmail(
+    @User("id") id: string,
+    @User("emailVerified") emailVerified: boolean,
+    @Context() { req }: { req: Request },
+  ) {
+    const token = req.query.token as string;
+
+    if (!token) throw new BadRequestException(ErrorMessage.InvalidVerificationToken);
+
+    if (emailVerified) {
+      throw new BadRequestException(ErrorMessage.EmailAlreadyVerified);
+    }
+
+    await this.authService.verifyEmail(id, token);
+
+    return { message: "Your email has been successfully verified." };
   }
 
   @Mutation(() => MessageEntity, { name: "reverifyEmail" })

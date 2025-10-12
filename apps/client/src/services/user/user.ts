@@ -17,6 +17,7 @@ export const fetchUser = async () => {
             name
             locale
             picture
+            emailVerified
           }
         }`,
   });
