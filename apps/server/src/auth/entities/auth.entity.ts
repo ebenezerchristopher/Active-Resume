@@ -1,4 +1,4 @@
-import { AuthProvidersDto } from "@active-resume/dto";
+import { AuthProvidersDto, BackupCodesDto } from "@active-resume/dto";
 import { Message } from "./../../shared/dto/message.dto";
 import { ObjectType, Field, registerEnumType } from "@nestjs/graphql";
 import { AuthResponseDto } from "@active-resume/dto";
@@ -25,3 +25,9 @@ registerEnumType(AuthProviders, {
   name: "AuthProviders",
   description: "Authentication Providers",
 });
+
+@ObjectType()
+export class BackupCodeEntity implements BackupCodesDto {
+  @Field(() => [String])
+  backupCodes: string[];
+}

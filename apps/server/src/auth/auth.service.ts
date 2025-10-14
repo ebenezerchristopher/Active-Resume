@@ -11,13 +11,9 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { AuthProvidersDto, LoginDto, RegisterDto, UserWithSecrets } from "@active-resume/dto";
 import { ErrorMessage } from "@active-resume/utils";
 import * as bcryptjs from "bcryptjs";
-//import { Response } from "express";
-
+import { authenticator } from "otplib";
 import { Config } from "../config/schema";
-// MailService will be used in a later ticket for email verification
-// import { MailService } from "../mail/mail.service";
 import { UserService } from "../user/user.service";
-//import { getCookieOptions } from "./utils/cookie";
 import { Payload } from "./utils/payload";
 import { randomBytes } from "node:crypto";
 import { MailService } from "../mail/mail.service";
@@ -181,6 +177,72 @@ export class AuthService {
     return providers;
   }
 
+  // Two-Factor Authentication Flows
+  async setup2FASecret(email: string) {
+    // If the user already has 2FA enabled, throw an error
+    const user = await this.userService.findOneByIdentifierOrThrow(email);
+
+    if (user.twoFactorEnabled) {
+      throw new BadRequestException(ErrorMessage.TwoFactorAlreadyEnabled);
+    }
+
+    const secret = authenticator.generateSecret();
+    const uri = authenticator.keyuri(email, "Active Resume", secret);
+
+    await this.userService.updateByEmail(email, {
+      secrets: { update: { twoFactorSecret: secret } },
+    });
+
+    return { message: uri };
+  }
+
+  async enable2FA(email: string, code: string) {
+    const user = await this.userService.findOneByIdentifierOrThrow(email);
+
+    // If the user already has 2FA enabled, throw an error
+    if (user.twoFactorEnabled) {
+      throw new BadRequestException(ErrorMessage.TwoFactorAlreadyEnabled);
+    }
+
+    // If the user doesn't have a 2FA secret set, throw an error
+    if (!user.secrets?.twoFactorSecret) {
+      throw new BadRequestException(ErrorMessage.TwoFactorNotEnabled);
+    }
+
+    const verified = authenticator.verify({
+      secret: user.secrets.twoFactorSecret,
+      token: code,
+    });
+
+    if (!verified) {
+      throw new BadRequestException(ErrorMessage.InvalidTwoFactorCode);
+    }
+
+    // Create backup codes and store them in the database
+    const backupCodes = Array.from({ length: 8 }, () => randomBytes(5).toString("hex"));
+
+    await this.userService.updateByEmail(email, {
+      twoFactorEnabled: true,
+      secrets: { update: { twoFactorBackupCodes: backupCodes } },
+    });
+
+    return { backupCodes };
+  }
+
+  async disable2FA(email: string) {
+    const user = await this.userService.findOneByIdentifierOrThrow(email);
+
+    // If the user doesn't have 2FA enabled, throw an error
+    if (!user.twoFactorEnabled) {
+      throw new BadRequestException(ErrorMessage.TwoFactorNotEnabled);
+    }
+
+    await this.userService.updateByEmail(email, {
+      twoFactorEnabled: false,
+      secrets: { update: { twoFactorSecret: null, twoFactorBackupCodes: [] } },
+    });
+  }
+
   // Password Reset Flows
   async forgotPassword(email: string) {
     const token = this.generateToken("reset");
@@ -199,6 +261,22 @@ export class AuthService {
 
     await this.mailService.sendEmail({ to: email, subject, text });
     Logger.log(`Password reset email sent to ${email}`);
+  }
+
+  async updatePassword(email: string, currentPassword: string, newPassword: string) {
+    const user = await this.userService.findOneByIdentifierOrThrow(email);
+
+    if (!user.secrets?.password) {
+      throw new BadRequestException(ErrorMessage.OAuthUser);
+    }
+
+    await this.validatePassword(currentPassword, user.secrets.password);
+
+    const newHashedPassword = await this.hash(newPassword);
+
+    await this.userService.updateByEmail(email, {
+      secrets: { update: { password: newHashedPassword } },
+    });
   }
 
   async resetPassword(token: string, password: string) {

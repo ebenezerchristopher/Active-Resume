@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 
 import { AccountSettings } from "./_sections/account";
+import { SecuritySettings } from "./_sections/security";
 //import { DangerZoneSettings } from "./_sections/danger";
 //import { OpenAISettings } from "./_sections/openai";
 //import { ProfileSettings } from "./_sections/profile";
@@ -30,6 +31,8 @@ export const SettingsPage = () => (
         <div className="space-y-6">
           <AccountSettings />
           <Separator />
+          <SecuritySettings />
+          <Separator />
         </div>
       </ScrollArea>
     </div>
@@ -37,8 +40,7 @@ export const SettingsPage = () => (
 );
 
 /**
- <SecuritySettings />
-          <Separator />
+ 
           <ProfileSettings />
           <Separator />
           <OpenAISettings />

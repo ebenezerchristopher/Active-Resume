@@ -18,6 +18,7 @@ export const fetchUser = async () => {
             locale
             picture
             emailVerified
+            twoFactorEnabled
           }
         }`,
   });

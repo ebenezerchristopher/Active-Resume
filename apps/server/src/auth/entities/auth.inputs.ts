@@ -1,5 +1,12 @@
 import { InputType, Field } from "@nestjs/graphql";
-import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from "@active-resume/dto";
+import {
+  RegisterDto,
+  LoginDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
+  UpdatePasswordDto,
+  TwoFactorDto,
+} from "@active-resume/dto";
 
 @InputType()
 export class RegisterInput implements RegisterDto {
@@ -41,4 +48,19 @@ export class ResetPasswordInput implements ResetPasswordDto {
 
   @Field()
   password: string;
+}
+
+@InputType()
+export class UpdatePasswordInput implements UpdatePasswordDto {
+  @Field()
+  currentPassword: string;
+
+  @Field()
+  newPassword: string;
+}
+
+@InputType()
+export class TwoFactorInput implements TwoFactorDto {
+  @Field()
+  code: string;
 }

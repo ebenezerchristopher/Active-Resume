@@ -20,6 +20,7 @@ export default defineConfig(() => ({
     hmr: {
       host: HMR_HOST,
       protocol: "wss",
+      overlay: false,
     },
     allowedHosts: ["polished-quagga-golden.ngrok-free.app"],
     cors: process.env.NODE_ENV === "development" ? true : { origin: false },

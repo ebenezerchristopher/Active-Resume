@@ -8,6 +8,7 @@ import { LocaleProvider } from "./locale";
 import { TooltipProvider } from "@active-resume/ui";
 import { Toaster } from "./toaster";
 import { AuthRefreshProvider } from "./auth-refresh";
+import { DialogProvider } from "./dialog";
 
 export const Providers = () => (
   <LocaleProvider>
@@ -16,8 +17,11 @@ export const Providers = () => (
         <AuthRefreshProvider>
           <ThemeProvider>
             <TooltipProvider>
-              <Outlet />
-              <Toaster />
+              <DialogProvider>
+                <Outlet />
+
+                <Toaster />
+              </DialogProvider>
             </TooltipProvider>
           </ThemeProvider>
         </AuthRefreshProvider>

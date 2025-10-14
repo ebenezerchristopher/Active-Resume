@@ -1,15 +1,23 @@
 import { Args, Context, Mutation, Resolver, Query } from "@nestjs/graphql";
-import { authResponseSchema, RegisterDto, UserWithSecrets } from "@active-resume/dto";
+import {
+  authResponseSchema,
+  backupCodesSchema,
+  RegisterDto,
+  UserWithSecrets,
+} from "@active-resume/dto";
 import { Request, Response } from "express";
 
 import { AuthService } from "./auth.service";
 import {
   AuthProviders,
   AuthResponse,
+  BackupCodeEntity,
   ForgotPasswordInput,
   LoginInput,
   MessageEntity,
   ResetPasswordInput,
+  TwoFactorInput,
+  UpdatePasswordInput,
 } from "./entities";
 import { RegisterInput } from "./entities";
 import { payloadSchema } from "./utils/payload";
@@ -27,6 +35,7 @@ import { User } from "../user/decorators/user.decorator";
 import { RefreshGuard } from "./guards/refresh.guard";
 import { TwoFactorGuard } from "./guards/two-factor.guard";
 import { Message } from "../shared/dto/message.dto";
+import { JwtGuard } from "./guards/jwt.guard";
 
 @Resolver()
 export class AuthResolver {
@@ -74,6 +83,7 @@ export class AuthResolver {
     return responseData as AuthResponse;
   }
 
+  // Standard Authentication flows
   @Mutation(() => AuthResponse)
   async register(
     @Args("data") data: RegisterInput,
@@ -118,11 +128,21 @@ export class AuthResolver {
     return { message: "You have been logged out, tschüss!" };
   }
 
+  @Mutation(() => MessageEntity, { name: "password" })
+  @UseGuards(TwoFactorGuard)
+  async updatePassword(@User("email") email: string, @Args("data") data: UpdatePasswordInput) {
+    const { currentPassword, newPassword } = data;
+    await this.authService.updatePassword(email, currentPassword, newPassword);
+
+    return { message: "Your password has been successfully updated." };
+  }
+
   @Query(() => [AuthProviders])
   async providers() {
     return this.authService.getAuthProviders();
   }
 
+  // Password Reset flows
   @Mutation(() => MessageEntity)
   async forgotPassword(@Args("data") data: ForgotPasswordInput) {
     try {
@@ -149,6 +169,7 @@ export class AuthResolver {
     }
   }
 
+  // Email Verification flows
   @Mutation(() => MessageEntity)
   @UseGuards(TwoFactorGuard)
   async verifyEmail(
@@ -184,5 +205,39 @@ export class AuthResolver {
     return {
       message: "You should have received a new email with a link to verify your email address.",
     };
+  }
+
+  // Two-Factor Authentication flows
+  @Mutation(() => MessageEntity, { name: "TwoFaSetup" })
+  @UseGuards(JwtGuard)
+  async setup2FASecret(@User("email") email: string) {
+    return this.authService.setup2FASecret(email);
+  }
+
+  @Mutation(() => BackupCodeEntity, { name: "TwoFaEnable" })
+  @UseGuards(JwtGuard)
+  async enable2FA(
+    @User("id") id: string,
+    @User("email") email: string,
+    @Args("data") data: TwoFactorInput,
+    @Context() { res }: { res: Response },
+  ) {
+    const { code } = data;
+    const { backupCodes } = await this.authService.enable2FA(email, code);
+
+    const { accessToken, refreshToken } = await this.exchangeToken(id, email, true);
+
+    res.cookie("Authentication", accessToken, getCookieOptions("access"));
+    res.cookie("Refresh", refreshToken, getCookieOptions("refresh"));
+
+    return backupCodesSchema.parse({ backupCodes });
+  }
+
+  @Mutation(() => MessageEntity, { name: "TwoFaDisable" })
+  @UseGuards(TwoFactorGuard)
+  async disable2FA(@User("email") email: string) {
+    await this.authService.disable2FA(email);
+
+    return { message: "Two-factor authentication has been successfully disabled on your account." };
   }
 }
