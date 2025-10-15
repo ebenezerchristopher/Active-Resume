@@ -36,6 +36,7 @@ import { RefreshGuard } from "./guards/refresh.guard";
 import { TwoFactorGuard } from "./guards/two-factor.guard";
 import { Message } from "../shared/dto/message.dto";
 import { JwtGuard } from "./guards/jwt.guard";
+import { UserEntity } from "@server/user/entities";
 
 @Resolver()
 export class AuthResolver {
@@ -239,5 +240,18 @@ export class AuthResolver {
     await this.authService.disable2FA(email);
 
     return { message: "Two-factor authentication has been successfully disabled on your account." };
+  }
+
+  @Mutation(() => AuthResponse, { name: "verifyOtp" })
+  @UseGuards(JwtGuard)
+  async verify2FACode(
+    @User() user: UserEntity,
+    @Args("data") data: TwoFactorInput,
+    @Context() { res }: { res: Response },
+  ): Promise<AuthResponse> {
+    const { code } = data;
+    await this.authService.verify2FACode(user.email, code);
+
+    return this.handleAuthenticationResponse(user as UserWithSecrets, res, true);
   }
 }

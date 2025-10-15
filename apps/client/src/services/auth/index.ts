@@ -10,3 +10,4 @@ export * from "./update-password";
 export * from "./two-factor-authentication/setup";
 export * from "./two-factor-authentication/disable";
 export * from "./two-factor-authentication/enable";
+export * from "./two-factor-authentication/verify-otp";

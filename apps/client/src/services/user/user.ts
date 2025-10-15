@@ -1,7 +1,6 @@
 import type { UserDto } from "@active-resume/dto";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-
 import { axios } from "@client/libs/axios";
 import { useAuthStore } from "@client/stores/auth";
 import { GraphQLResponse } from "@active-resume/utils";

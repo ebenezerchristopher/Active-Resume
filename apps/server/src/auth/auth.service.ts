@@ -229,6 +229,26 @@ export class AuthService {
     return { backupCodes };
   }
 
+  async verify2FACode(email: string, code: string) {
+    const user = await this.userService.findOneByIdentifierOrThrow(email);
+
+    // If the user doesn't have 2FA enabled, or does not have a 2FA secret set, throw an error
+    if (!user.twoFactorEnabled || !user.secrets?.twoFactorSecret) {
+      throw new BadRequestException(ErrorMessage.TwoFactorNotEnabled);
+    }
+
+    const verified = authenticator.verify({
+      secret: user.secrets.twoFactorSecret,
+      token: code,
+    });
+
+    if (!verified) {
+      throw new BadRequestException(ErrorMessage.InvalidTwoFactorCode);
+    }
+
+    return user;
+  }
+
   async disable2FA(email: string) {
     const user = await this.userService.findOneByIdentifierOrThrow(email);
 
