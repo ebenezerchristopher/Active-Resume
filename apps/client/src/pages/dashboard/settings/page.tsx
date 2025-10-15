@@ -5,9 +5,10 @@ import { Helmet } from "react-helmet-async";
 
 import { AccountSettings } from "./_sections/account";
 import { SecuritySettings } from "./_sections/security";
+import { ProfileSettings } from "./_sections/profile";
 //import { DangerZoneSettings } from "./_sections/danger";
 //import { OpenAISettings } from "./_sections/openai";
-//import { ProfileSettings } from "./_sections/profile";
+
 //import { SecuritySettings } from "./_sections/security";
 
 export const SettingsPage = () => (
@@ -33,6 +34,7 @@ export const SettingsPage = () => (
           <Separator />
           <SecuritySettings />
           <Separator />
+          <ProfileSettings />
         </div>
       </ScrollArea>
     </div>

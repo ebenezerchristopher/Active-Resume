@@ -16,3 +16,4 @@ export * from "./shortcut";
 export * from "./dropdown-menu";
 export * from "./dialog";
 export * from "./alert-dialog";
+export * from "./combobox";

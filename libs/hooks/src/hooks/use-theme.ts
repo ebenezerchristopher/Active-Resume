@@ -3,7 +3,7 @@ import { useLocalStorage, useMediaQuery } from "usehooks-ts";
 
 const COLOR_SCHEME_QUERY = "(prefers-color-scheme: dark)";
 
-type Theme = "system" | "dark" | "light";
+export type Theme = "system" | "dark" | "light";
 
 type UseThemeOutput = {
   theme: Theme;
