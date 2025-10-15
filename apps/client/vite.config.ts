@@ -6,7 +6,7 @@ import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
 
 // used to keep the websocket alive when tunelling with ngrok
-const HMR_HOST = process.env.HMR_HOST || "polished-quagga-golden.ngrok-free.app";
+const HMR_HOST = process.env.HMR_HOST || "parchingly-unvitiating-jeanelle.ngrok-free.dev";
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -16,13 +16,14 @@ export default defineConfig(() => ({
   },
   server: {
     port: 4200,
-    host: "localhost",
+    host: true,
     hmr: {
       host: HMR_HOST,
       protocol: "wss",
       overlay: false,
+      clientPort: 443,
     },
-    allowedHosts: ["polished-quagga-golden.ngrok-free.app"],
+    allowedHosts: ["parchingly-unvitiating-jeanelle.ngrok-free.dev"],
     cors: process.env.NODE_ENV === "development" ? true : { origin: false },
     proxy: {
       "/api": {

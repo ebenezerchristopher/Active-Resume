@@ -1,5 +1,5 @@
 import { createZodDto } from "nestjs-zod/dto";
-import { z } from "zod";
+import { z } from "zod/v3";
 
 export const featureSchema = z.object({
   isSignupsDisabled: z.boolean().default(false),

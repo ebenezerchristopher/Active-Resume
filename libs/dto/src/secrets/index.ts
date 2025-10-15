@@ -1,5 +1,5 @@
-import { idSchema } from '@active-resume/schema';
-import { z } from 'zod';
+import { idSchema } from "@active-resume/schema";
+import { z } from "zod/v3";
 
 export const secretsSchema = z.object({
   id: idSchema,

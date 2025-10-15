@@ -18,7 +18,7 @@ async function bootstrap() {
   const publicUrl = configService.getOrThrow("PUBLIC_URL");
   const isHTTPS = publicUrl.startsWith("https://") ?? false;
 
-  // GraphQL File Upload Middleware
+  // GraphQL File Upload Parser Middleware
   app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
 
   // Cookie Parser

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 
 export const configSchema = z.object({
   NODE_ENV: z.enum(["development", "production"]).default("production"),
@@ -7,12 +7,12 @@ export const configSchema = z.object({
   PORT: z.coerce.number().default(3000),
 
   // URLs
-  PUBLIC_URL: z.url(),
-  STORAGE_URL: z.url(),
-  TUNNEL_URL: z.url().optional(),
+  PUBLIC_URL: z.string().url(),
+  STORAGE_URL: z.string().url(),
+  TUNNEL_URL: z.string().url().optional(),
 
   // Database (Prisma)
-  DATABASE_URL: z.url().startsWith("postgresql://"),
+  DATABASE_URL: z.string().url().startsWith("postgresql://"),
 
   // Authentication Secrets
   ACCESS_TOKEN_SECRET: z.string(),
@@ -20,7 +20,7 @@ export const configSchema = z.object({
 
   // Browser
   CHROME_TOKEN: z.string(),
-  CHROME_URL: z.url(),
+  CHROME_URL: z.string().url(),
   CHROME_IGNORE_HTTPS_ERRORS: z
     .string()
     .default("false")
@@ -30,6 +30,7 @@ export const configSchema = z.object({
   MAIL_FROM: z.string().includes("@").optional().default("noreply@localhost"),
   SMTP_URL: z
 
+    .string()
     .url()
     .refine((url) => url.startsWith("smtp://") || url.startsWith("smtps://"))
     .optional(),
@@ -67,23 +68,23 @@ export const configSchema = z.object({
   // GitHub (OAuth, Optional)
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
-  GITHUB_CALLBACK_URL: z.url().optional(),
+  GITHUB_CALLBACK_URL: z.string().url().optional(),
 
   // Google (OAuth, Optional)
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
-  GOOGLE_CALLBACK_URL: z.url().optional(),
+  GOOGLE_CALLBACK_URL: z.string().url().optional(),
 
   // OpenID (Optional)
   VITE_OPENID_NAME: z.string().optional(),
-  OPENID_AUTHORIZATION_URL: z.url().optional(),
-  OPENID_CALLBACK_URL: z.url().optional(),
+  OPENID_AUTHORIZATION_URL: z.string().url().optional(),
+  OPENID_CALLBACK_URL: z.string().url().optional(),
   OPENID_CLIENT_ID: z.string().optional(),
   OPENID_CLIENT_SECRET: z.string().optional(),
   OPENID_ISSUER: z.string().optional(),
   OPENID_SCOPE: z.string().optional(),
-  OPENID_TOKEN_URL: z.url().optional(),
-  OPENID_USER_INFO_URL: z.url().optional(),
+  OPENID_TOKEN_URL: z.string().url().optional(),
+  OPENID_USER_INFO_URL: z.string().url().optional(),
 });
 
 export type Config = z.infer<typeof configSchema>;

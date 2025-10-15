@@ -16,7 +16,7 @@ import {
 } from "@active-resume/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v3";
 
 import { useToast } from "@client/hooks/use-toast";
 import { useUpdatePassword } from "@client/services/auth";

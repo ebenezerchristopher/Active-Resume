@@ -1,5 +1,5 @@
 import { createZodDto } from "nestjs-zod/dto";
-import { z } from "zod";
+import { z } from "zod/v3";
 
 import { userSchema } from "../user";
 

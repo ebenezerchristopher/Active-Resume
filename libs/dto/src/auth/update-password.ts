@@ -1,5 +1,5 @@
 import { createZodDto } from "nestjs-zod/dto";
-import { z } from "zod";
+import { z } from "zod/v3";
 
 export const updatePasswordSchema = z.object({
   currentPassword: z.string().min(6),

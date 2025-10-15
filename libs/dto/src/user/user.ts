@@ -1,7 +1,7 @@
 import { idSchema } from "@active-resume/schema";
 import { dateSchema } from "@active-resume/utils";
 import { createZodDto } from "nestjs-zod/dto";
-import { z } from "zod";
+import { z } from "zod/v3";
 
 import { secretsSchema } from "../secrets";
 
@@ -17,9 +17,12 @@ export const usernameSchema = z
 export const userSchema = z.object({
   id: idSchema,
   name: z.string().min(1).max(255),
-  picture: z.literal("").or(z.null()).or(z.url()),
+  picture: z.literal("").or(z.null()).or(z.string().url()),
   username: usernameSchema,
-  email: z.email().transform((value) => value.toLowerCase()),
+  email: z
+    .string()
+    .email()
+    .transform((value) => value.toLowerCase()),
   locale: z.string().default("en-US"),
   emailVerified: z.boolean().default(false),
   twoFactorEnabled: z.boolean().default(false),

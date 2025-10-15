@@ -32,7 +32,7 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z } from "zod/v3";
 
 import { useToast } from "@client/hooks/use-toast";
 import { queryClient } from "@client/libs/query-client";

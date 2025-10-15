@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
-import { z } from "zod";
+import { z } from "zod/v3";
 
-export const dateSchema = z.union([z.date(), z.iso.datetime()]).transform((value) => {
+export const dateSchema = z.union([z.date(), z.string().datetime()]).transform((value) => {
   if (typeof value === "string") return dayjs(value).toDate();
   return value;
 });

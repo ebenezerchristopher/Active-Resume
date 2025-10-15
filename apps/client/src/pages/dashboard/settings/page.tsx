@@ -7,7 +7,7 @@ import { AccountSettings } from "./_sections/account";
 import { SecuritySettings } from "./_sections/security";
 import { ProfileSettings } from "./_sections/profile";
 //import { DangerZoneSettings } from "./_sections/danger";
-//import { OpenAISettings } from "./_sections/openai";
+import { GeminiAISettings } from "./_sections/geminiai";
 
 //import { SecuritySettings } from "./_sections/security";
 
@@ -35,6 +35,8 @@ export const SettingsPage = () => (
           <SecuritySettings />
           <Separator />
           <ProfileSettings />
+          <Separator />
+          <GeminiAISettings />
         </div>
       </ScrollArea>
     </div>
