@@ -1,7 +1,6 @@
-import { DynamicModule, forwardRef, Module } from "@nestjs/common";
+import { DynamicModule, Global, Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
-
 import { UserModule } from "../user/user.module";
 import { AuthResolver } from "./auth.resolver";
 import { AuthService } from "./auth.service";
@@ -18,12 +17,13 @@ import { DummyStrategy } from "./strategy/dummy.strategy";
 import { GitHubStrategy } from "./strategy/github.strategy";
 import { UserService } from "@server/user/user.service";
 
+@Global()
 @Module({})
 export class AuthModule {
   static register(): DynamicModule {
     return {
       module: AuthModule,
-      imports: [PassportModule, JwtModule, forwardRef(() => UserModule), MailModule],
+      imports: [PassportModule, JwtModule, UserModule, MailModule],
       controllers: [AuthController],
       providers: [
         AuthService,

@@ -4,10 +4,10 @@ import {
   Logger,
   UseGuards,
 } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { JwtGuard } from "../auth/guards/jwt.guard";
-import { User as CurrentUser } from "./decorators/user.decorator";
+import { User } from "./decorators/user.decorator";
 import { UserDto } from "@active-resume/dto";
 import { UserEntity } from "./entities";
 import { UpdateUserInput } from "./entities";
@@ -15,8 +15,9 @@ import { Message } from "../shared/dto/message.dto";
 import { ErrorMessage } from "@active-resume/utils";
 import { UserService } from "./user.service";
 import { AuthService } from "../auth/auth.service";
+import { Response } from "express";
 
-@Resolver(() => UserDto)
+@Resolver()
 export class UserResolver {
   constructor(
     private readonly authService: AuthService,
@@ -25,7 +26,7 @@ export class UserResolver {
 
   @Query(() => UserEntity, { name: "me" })
   @UseGuards(JwtGuard)
-  me(@CurrentUser() user: UserDto) {
+  me(@User() user: UserDto) {
     // Use the Zod schema to strip out secrets and ensure the correct shape
     return user;
   }
@@ -33,7 +34,7 @@ export class UserResolver {
   @Mutation(() => UserEntity, { name: "updateMe" })
   @UseGuards(JwtGuard)
   async updateMe(
-    @CurrentUser("email") email: string,
+    @User("email") email: string,
     @Args("data") data: UpdateUserInput,
   ): Promise<UserEntity> {
     try {
@@ -65,12 +66,16 @@ export class UserResolver {
     }
   }
 
-  @Mutation(() => Message)
+  @Mutation(() => Message, { name: "delete" })
   @UseGuards(JwtGuard)
-  async deleteMe(@CurrentUser() user: UserDto): Promise<Message> {
-    await this.userService.deleteOneById(user.id);
+  async deleteMe(
+    @User("id") id: string,
+    @Context() { res: response }: { res: Response },
+  ): Promise<Message> {
+    await this.userService.deleteOneById(id);
 
-    // Clearing cookies will be handled in the Auth sprint's logout mutation.
+    response.clearCookie("Authentication");
+    response.clearCookie("Refresh");
 
     return {
       message: "Your account has been successfully deleted. Sorry to see you go!",

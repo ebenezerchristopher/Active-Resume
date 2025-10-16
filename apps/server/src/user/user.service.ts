@@ -3,10 +3,14 @@ import { Prisma, User } from "@prisma/client";
 import { UserWithSecrets } from "@active-resume/dto";
 import { ErrorMessage } from "@active-resume/utils";
 import { PrismaService } from "nestjs-prisma";
+import { StorageService } from "@server/storage/storage.service";
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly storageService: StorageService,
+  ) {}
 
   async findOneById(id: string): Promise<UserWithSecrets> {
     const user = await this.prisma.user.findUniqueOrThrow({
@@ -81,7 +85,9 @@ export class UserService {
   }
 
   async deleteOneById(id: string): Promise<void> {
-    // Storage deletion logic will be added in a later ticket when StorageModule is implemented
-    await this.prisma.user.delete({ where: { id } });
+    await Promise.all([
+      this.storageService.deleteFolder(id),
+      this.prisma.user.delete({ where: { id } }),
+    ]);
   }
 }
