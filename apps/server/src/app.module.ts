@@ -11,6 +11,8 @@ import { ContributorsModule } from "./contributors/contributors.module";
 import { FeatureModule } from "./feature/feature.module";
 import { MailModule } from "./mail/mail.module";
 import { StorageModule } from "./storage/storage.module";
+import { ResumeModule } from "./resume/resume.module";
+import { PrinterModule } from "./printer/printer.module";
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { StorageModule } from "./storage/storage.module";
     ContributorsModule,
     FeatureModule,
     StorageModule,
+    ResumeModule,
+    PrinterModule,
   ],
 
   providers: [],

@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import type { z } from "zod/v3";
 
-import { useForgotPassword } from "@client/services/auth";
+import { useForgotPassword } from "@/client/services/auth";
 
 type FormValues = z.infer<typeof forgotPasswordSchema>;
 

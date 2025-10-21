@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Button } from "@active-resume/ui";
 import { Link, useRouteError } from "react-router";
 
-import { LocaleProvider } from "@client/providers/locale";
+import { LocaleProvider } from "@/client/providers/locale";
 
 type RouterError = {
   statusText?: string;

@@ -15,9 +15,9 @@ import { useNavigate } from "react-router";
 import { useCounter } from "usehooks-ts";
 import { z } from "zod";
 
-import { useToast } from "@client/hooks/use-toast";
-import { useLogout } from "@client/services/auth";
-import { useDeleteUser } from "@client/services/user";
+import { useToast } from "@/client/hooks/use-toast";
+import { useLogout } from "@/client/services/auth";
+import { useDeleteUser } from "@/client/services/user";
 import { Trans } from "@lingui/react/macro";
 
 const formSchema = z.object({

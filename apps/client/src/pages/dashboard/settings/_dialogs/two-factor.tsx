@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { i18n } from "@lingui/core";
-import { msg, t } from "@lingui/core/macro";
+import { t } from "@lingui/core/macro";
 import { QrCodeIcon } from "@phosphor-icons/react";
 import {
   Alert,
@@ -34,10 +33,10 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v3";
 
-import { useToast } from "@client/hooks/use-toast";
-import { queryClient } from "@client/libs/query-client";
-import { useDisable2FA, useEnable2FA, useSetup2FA } from "@client/services/auth";
-import { useDialog } from "@client/stores/dialog";
+import { useToast } from "@/client/hooks/use-toast";
+import { queryClient } from "@/client/libs/query-client";
+import { useDisable2FA, useEnable2FA, useSetup2FA } from "@/client/services/auth";
+import { useDialog } from "@/client/stores/dialog";
 
 // We're using the pre-existing "mode" state to determine the stage of 2FA set up the user is in.
 // - "create" mode is used to enable 2FA.
@@ -178,7 +177,17 @@ export const TwoFactorDialog = () => {
                   <FormItem>
                     <FormControl>
                       <div className="space-y-4">
-                        <QRCodeSVG value={field.value ?? ""} size={256} className="mx-auto" />
+                        <QRCodeSVG
+                          value={field.value ?? ""}
+                          size={256}
+                          className="mx-auto"
+                          imageSettings={{
+                            src: "/icon/dark.svg",
+                            excavate: true,
+                            height: 52,
+                            width: 52,
+                          }}
+                        />
                         <Input readOnly {...field} className="opacity-75" />
                       </div>
                     </FormControl>

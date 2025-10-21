@@ -18,10 +18,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v3";
 
-import { useToast } from "@client/hooks/use-toast";
-import { useUpdatePassword } from "@client/services/auth";
-import { useUser } from "@client/services/user";
-import { useDialog } from "@client/stores/dialog";
+import { useToast } from "@/client/hooks/use-toast";
+import { useUpdatePassword } from "@/client/services/auth";
+import { useUser } from "@/client/services/user";
+import { useDialog } from "@/client/stores/dialog";
 import { Trans } from "@lingui/react/macro";
 
 const formSchema = z.object({

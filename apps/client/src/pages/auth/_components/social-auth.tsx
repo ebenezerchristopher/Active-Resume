@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { FingerprintIcon, GithubLogoIcon, GoogleLogoIcon } from "@phosphor-icons/react";
 import { Button } from "@active-resume/ui";
 
-import { useAuthProviders } from "@client/services/auth/providers";
+import { useAuthProviders } from "@/client/services/auth/providers";
 
 export const SocialAuth = () => {
   const { providers } = useAuthProviders();

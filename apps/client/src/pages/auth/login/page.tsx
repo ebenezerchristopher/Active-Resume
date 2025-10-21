@@ -23,8 +23,8 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import type { z } from "zod/v3";
 
-import { useLogin } from "@client/services/auth";
-import { useFeatureFlags } from "@client/services/feature";
+import { useLogin } from "@/client/services/auth";
+import { useFeatureFlags } from "@/client/services/feature";
 import { Trans } from "@lingui/react/macro";
 
 type FormValues = z.infer<typeof loginSchema>;

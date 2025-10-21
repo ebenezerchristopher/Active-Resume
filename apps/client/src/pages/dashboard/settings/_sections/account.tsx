@@ -20,11 +20,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 
-import { UserAvatar } from "@client/components/user-avatar";
-import { useToast } from "@client/hooks/use-toast";
-import { useResendVerificationEmail } from "@client/services/auth";
-import { useUploadImage } from "@client/services/storage";
-import { useUpdateUser, useUser } from "@client/services/user";
+import { UserAvatar } from "@/client/components/user-avatar";
+import { useToast } from "@/client/hooks/use-toast";
+import { useResendVerificationEmail } from "@/client/services/auth";
+import { useUploadImage } from "@/client/services/storage";
+import { useUpdateUser, useUser } from "@/client/services/user";
 
 export const AccountSettings = () => {
   const { user } = useUser();

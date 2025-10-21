@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router";
 import type { z } from "zod/v3";
 
-import { useResetPassword } from "@client/services/auth";
+import { useResetPassword } from "@/client/services/auth";
 import { Trans } from "@lingui/react/macro";
 
 type FormValues = z.infer<typeof resetPasswordSchema>;

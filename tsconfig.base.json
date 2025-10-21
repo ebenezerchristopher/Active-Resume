@@ -10,44 +10,20 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@active-resume/dto": [
-        "libs/dto/src/index.ts"
-      ],
-      "@active-resume/hooks": [
-        "libs/hooks/src/index.ts"
-      ],
-      "@active-resume/schema": [
-        "libs/schema/src/index.ts"
-      ],
-      "@active-resume/ui": [
-        "libs/ui/src/index.ts"
-      ],
-      "@active-resume/utils": [
-        "libs/utils/src/index.ts"
-      ],
-      "@artboard/*": [
-        "apps/artboard/src/*"
-      ],
-      "@client/*": [
-        "apps/client/src/*"
-      ],
-      "@server/*": [
-        "apps/server/src/*"
-      ]
+      "@active-resume/dto": ["libs/dto/src/index.ts"],
+      "@active-resume/hooks": ["libs/hooks/src/index.ts"],
+      "@active-resume/schema": ["libs/schema/src/index.ts"],
+      "@active-resume/ui": ["libs/ui/src/index.ts"],
+      "@active-resume/utils": ["libs/utils/src/index.ts"],
+      "@/artboard/*": ["apps/artboard/src/*"],
+      "@/client/*": ["apps/client/src/*"],
+      "@/server/*": ["apps/server/src/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "tmp",
-    ".nx"
-  ]
+  "exclude": ["node_modules", "dist", "tmp", ".nx"]
 }

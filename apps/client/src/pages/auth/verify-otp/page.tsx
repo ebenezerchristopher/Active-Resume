@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import type { z } from "zod/v3";
 
-import { useVerifyOtp } from "@client/services/auth";
+import { useVerifyOtp } from "@/client/services/auth";
 
 type FormValues = z.infer<typeof twoFactorSchema>;
 

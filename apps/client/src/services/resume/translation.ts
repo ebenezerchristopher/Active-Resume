@@ -1,8 +1,8 @@
 import type { Language, GraphQLResponse } from "@active-resume/utils";
 import { useQuery } from "@tanstack/react-query";
 
-import { LANGUAGES_KEY } from "@client/constants/query-keys";
-import { axios } from "@client/libs/axios";
+import { LANGUAGES_KEY } from "@/client/constants/query-keys";
+import { axios } from "@/client/libs/axios";
 
 export const fetchLanguages = async () => {
   const response = await axios.post<GraphQLResponse<Language[]>>(`/graphql`, {

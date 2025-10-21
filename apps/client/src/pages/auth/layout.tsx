@@ -3,10 +3,10 @@ import { cn } from "@active-resume/utils";
 import { useMemo } from "react";
 import { Link, matchRoutes, Outlet, useLocation } from "react-router";
 
-import { LocaleSwitch } from "@client/components/locale-switch";
-import { Logo } from "@client/components/logo";
-import { ThemeSwitch } from "@client/components/theme-switch";
-import { useAuthProviders } from "@client/services/auth/providers";
+import { LocaleSwitch } from "@/client/components/locale-switch";
+import { Logo } from "@/client/components/logo";
+import { ThemeSwitch } from "@/client/components/theme-switch";
+import { useAuthProviders } from "@/client/services/auth/providers";
 
 import { SocialAuth } from "./_components/social-auth";
 

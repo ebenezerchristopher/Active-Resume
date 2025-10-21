@@ -15,8 +15,8 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod/v3";
 
-import { DEFAULT_MAX_TOKENS, DEFAULT_MODEL } from "@client/constants/llm";
-import { useGeminiAiStore } from "@client/stores/geminiai";
+import { DEFAULT_MAX_TOKENS, DEFAULT_MODEL } from "@/client/constants/llm";
+import { useGeminiAiStore } from "@/client/stores/geminiai";
 import { Trans } from "@lingui/react/macro";
 
 const formSchema = z.object({

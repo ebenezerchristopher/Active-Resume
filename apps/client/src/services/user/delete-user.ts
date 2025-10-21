@@ -1,7 +1,7 @@
 import type { MessageDto } from "@active-resume/dto";
 import { useMutation } from "@tanstack/react-query";
-import { axios } from "@client/libs/axios";
-import { queryClient } from "@client/libs/query-client";
+import { axios } from "@/client/libs/axios";
+import { queryClient } from "@/client/libs/query-client";
 import { GraphQLResponse } from "@active-resume/utils";
 
 export const deleteUser = async () => {

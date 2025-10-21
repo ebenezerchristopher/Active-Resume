@@ -5,9 +5,9 @@ import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate, useSearchParams } from "react-router";
 
-import { useToast } from "@client/hooks/use-toast";
-import { queryClient } from "@client/libs/query-client";
-import { useVerifyEmail } from "@client/services/auth";
+import { useToast } from "@/client/hooks/use-toast";
+import { queryClient } from "@/client/libs/query-client";
+import { useVerifyEmail } from "@/client/services/auth";
 import { Trans } from "@lingui/react/macro";
 
 export const VerifyEmailPage = () => {

@@ -12,10 +12,10 @@ import { MailModule } from "../mail/mail.module";
 import { AuthController } from "./auth.controller";
 import { GoogleStrategy } from "./strategy/google.strategy";
 import { ConfigService } from "@nestjs/config";
-import { Config } from "@server/config/schema";
+import { Config } from "@/server/config/schema";
 import { DummyStrategy } from "./strategy/dummy.strategy";
 import { GitHubStrategy } from "./strategy/github.strategy";
-import { UserService } from "@server/user/user.service";
+import { UserService } from "@/server/user/user.service";
 
 @Global()
 @Module({})

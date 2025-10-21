@@ -5,7 +5,7 @@ import _axios from "axios";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
 import { redirect } from "react-router";
 
-import { refreshToken } from "@client/services/auth";
+import { refreshToken } from "@/client/services/auth";
 
 import { USER_KEY } from "../constants/query-keys";
 import { toast } from "../hooks/use-toast";

@@ -36,7 +36,7 @@ import { RefreshGuard } from "./guards/refresh.guard";
 import { TwoFactorGuard } from "./guards/two-factor.guard";
 import { Message } from "../shared/dto/message.dto";
 import { JwtGuard } from "./guards/jwt.guard";
-import { UserEntity } from "@server/user/entities";
+import { UserEntity } from "@/server/user/entities";
 
 @Resolver()
 export class AuthResolver {

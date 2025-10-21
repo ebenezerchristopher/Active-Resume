@@ -14,8 +14,8 @@ import { cn } from "@active-resume/utils";
 import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v3";
-import { LocaleComboboxPopover } from "@client/components/locale-combobox";
-import { useUpdateUser, useUser } from "@client/services/user";
+import { LocaleComboboxPopover } from "@/client/components/locale-combobox";
+import { useUpdateUser, useUser } from "@/client/services/user";
 import { Trans } from "@lingui/react/macro";
 
 const formSchema = z.object({

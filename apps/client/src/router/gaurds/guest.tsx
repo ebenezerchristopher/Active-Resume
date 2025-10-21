@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useSearchParams } from "react-router";
 
-import { useAuthStore } from "@client/stores/auth";
+import { useAuthStore } from "@/client/stores/auth";
 
 export const GuestGuard = () => {
   const isLoggedIn = useAuthStore((state) => !!state.user);

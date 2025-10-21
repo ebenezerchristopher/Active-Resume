@@ -2,7 +2,7 @@ import type { ResetPasswordDto } from "@active-resume/dto";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 
-import { axios } from "@client/libs/axios";
+import { axios } from "@/client/libs/axios";
 
 export const resetPassword = async (data: ResetPasswordDto) => {
   return axios.post<undefined, AxiosResponse<undefined>>("/graphql", {

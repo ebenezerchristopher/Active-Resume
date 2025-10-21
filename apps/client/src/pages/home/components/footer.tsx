@@ -2,10 +2,10 @@ import { t } from "@lingui/core/macro";
 import { Separator } from "@active-resume/ui";
 import { Link } from "react-router";
 
-import { Copyright } from "@client/components/copyright";
-import { LocaleSwitch } from "@client/components/locale-switch";
-import { Logo } from "@client/components/logo";
-import { ThemeSwitch } from "@client/components/theme-switch";
+import { Copyright } from "@/client/components/copyright";
+import { LocaleSwitch } from "@/client/components/locale-switch";
+import { Logo } from "@/client/components/logo";
+import { ThemeSwitch } from "@/client/components/theme-switch";
 
 export const Footer = () => (
   <footer className="bg-background">

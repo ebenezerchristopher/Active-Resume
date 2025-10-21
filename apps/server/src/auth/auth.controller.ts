@@ -2,7 +2,7 @@ import { Controller, Get, InternalServerErrorException, Res, UseGuards } from "@
 import { ApiTags } from "@nestjs/swagger";
 import { GoogleGuard } from "./guards/google.guard";
 import { UserWithSecrets } from "@active-resume/dto";
-import { restUser } from "@server/user/decorators/user.decorator";
+import { restUser } from "@/server/user/decorators/user.decorator";
 import { AuthService } from "./auth.service";
 import { ConfigService } from "@nestjs/config";
 import { ErrorMessage } from "@active-resume/utils";

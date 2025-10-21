@@ -1,9 +1,9 @@
 import type { AuthResponseDto, LoginDto } from "@active-resume/dto";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
-import { axios } from "@client/libs/axios";
-import { queryClient } from "@client/libs/query-client";
-import { useAuthStore } from "@client/stores/auth";
+import { axios } from "@/client/libs/axios";
+import { queryClient } from "@/client/libs/query-client";
+import { useAuthStore } from "@/client/stores/auth";
 import { GraphQLResponse } from "@active-resume/utils";
 
 export const login = async (data: LoginDto) => {

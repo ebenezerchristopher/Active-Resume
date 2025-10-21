@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { axios } from "@client/libs/axios";
+import { axios } from "@/client/libs/axios";
 import { GraphQLResponse } from "@active-resume/utils";
 
 /**

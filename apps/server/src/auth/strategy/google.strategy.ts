@@ -5,7 +5,7 @@ import { User } from "@prisma/client";
 import { ErrorMessage, processUsername } from "@active-resume/utils";
 import { Profile, Strategy, StrategyOptions, VerifyCallback } from "passport-google-oauth20";
 
-import { UserService } from "@server/user/user.service";
+import { UserService } from "@/server/user/user.service";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {

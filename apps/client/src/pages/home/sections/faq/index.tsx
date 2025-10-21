@@ -1,7 +1,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@active-resume/ui";
 import { cn } from "@active-resume/utils";
 
-import { useLanguages } from "@client/services/resume/translation";
+import { useLanguages } from "@/client/services/resume/translation";
 
 // Who are you, and why did you build Reactive Resume?
 const Question1 = () => (

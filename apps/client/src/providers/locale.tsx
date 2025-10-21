@@ -1,4 +1,4 @@
-import "@client/libs/dayjs";
+import "@/client/libs/dayjs";
 
 import { i18n } from "@lingui/core";
 import { detect, fromStorage, fromUrl } from "@lingui/detect-locale";

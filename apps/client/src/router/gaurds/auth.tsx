@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router";
 
-import { useUser } from "@client/services/user";
+import { useUser } from "@/client/services/user";
 
 export const AuthGuard = () => {
   const location = useLocation();

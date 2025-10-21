@@ -3,8 +3,8 @@ import { BookIcon, SignOutIcon } from "@phosphor-icons/react";
 import { Button } from "@active-resume/ui";
 import { Link } from "react-router";
 
-import { useLogout } from "@client/services/auth";
-import { useAuthStore } from "@client/stores/auth";
+import { useLogout } from "@/client/services/auth";
+import { useAuthStore } from "@/client/stores/auth";
 
 export const HeroCTA = () => {
   const { logout } = useLogout();

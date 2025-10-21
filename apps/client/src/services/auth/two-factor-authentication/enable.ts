@@ -1,6 +1,6 @@
 import type { BackupCodesDto, TwoFactorDto } from "@active-resume/dto";
 import { useMutation } from "@tanstack/react-query";
-import { axios } from "@client/libs/axios";
+import { axios } from "@/client/libs/axios";
 import { GraphQLResponse } from "@active-resume/utils";
 
 export const enable2FA = async (data: TwoFactorDto) => {
