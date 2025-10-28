@@ -1,6 +1,7 @@
 import { TwoFactorDialog } from "../pages/dashboard/settings/_dialogs/two-factor";
 import { ResumeDialog } from "../pages/dashboard/resumes/_dialogs/resume";
 import { LockDialog } from "../pages/dashboard/resumes/_dialogs/lock";
+import { ImportDialog } from "../pages/dashboard/resumes/_dialogs/import";
 
 type Props = {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ export const DialogProvider = ({ children }: Props) => {
         <TwoFactorDialog />
         <ResumeDialog />
         <LockDialog />
+        <ImportDialog />
       </div>
     </>
   );

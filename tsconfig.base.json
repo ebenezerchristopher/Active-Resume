@@ -15,14 +15,15 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@active-resume/dto": ["libs/dto/src/index.ts"],
-      "@active-resume/hooks": ["libs/hooks/src/index.ts"],
-      "@active-resume/schema": ["libs/schema/src/index.ts"],
-      "@active-resume/ui": ["libs/ui/src/index.ts"],
-      "@active-resume/utils": ["libs/utils/src/index.ts"],
       "@/artboard/*": ["apps/artboard/src/*"],
       "@/client/*": ["apps/client/src/*"],
-      "@/server/*": ["apps/server/src/*"]
+      "@/server/*": ["apps/server/src/*"],
+      "@active-resume/dto": ["libs/dto/src/index.ts"],
+      "@active-resume/hooks": ["libs/hooks/src/index.ts"],
+      "@active-resume/parser": ["libs/parser/src/index.ts"],
+      "@active-resume/schema": ["libs/schema/src/index.ts"],
+      "@active-resume/ui": ["libs/ui/src/index.ts"],
+      "@active-resume/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "dist", "tmp", ".nx"]

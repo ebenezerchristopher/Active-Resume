@@ -36,7 +36,7 @@ import {
 } from "@active-resume/ui";
 import { cn, generateRandomName } from "@active-resume/utils";
 import slugify from "@sindresorhus/slugify";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm, Resolver } from "react-hook-form";
 import { z } from "zod/v3";
 

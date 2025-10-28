@@ -20,3 +20,5 @@ export * from "./combobox";
 export * from "./tabs";
 export * from "./card";
 export * from "./context-menu";
+export * from "./select";
+export * from "./label";
