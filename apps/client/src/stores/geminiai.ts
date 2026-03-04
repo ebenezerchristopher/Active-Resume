@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create, type StoreApi, type UseBoundStore } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { DEFAULT_MAX_TOKENS, DEFAULT_MODEL } from "../constants/llm";
@@ -14,7 +14,7 @@ type GeminiAIStore = {
   setMaxTokens: (maxTokens: number | null) => void;
 };
 
-export const useGeminiAiStore = create<GeminiAIStore>()(
+export const useGeminiAiStore: UseBoundStore<StoreApi<GeminiAIStore>> = create<GeminiAIStore>()(
   persist(
     (set) => ({
       baseURL: null,

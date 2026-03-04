@@ -4,3 +4,6 @@ export * from "./update";
 export * from "./delete";
 export * from "./import";
 export * from "./lock";
+export * from "./resume";
+export * from "./print";
+export * from "./statistics";

@@ -16,6 +16,9 @@ import { SettingsPage } from "../pages/dashboard/settings/page";
 import { VerifyEmailPage } from "../pages/auth/verify-email/page";
 import { VerifyOtpPage } from "../pages/auth/verify-otp/page";
 import { ResumesPage } from "../pages/dashboard/resumes/page";
+import { BuilderLayout } from "../pages/builder/layout";
+import { builderLoader, BuilderPage } from "../pages/builder/page";
+import { publicLoader, PublicResumePage } from "../pages/public/page";
 
 export const routes = createRoutesFromElements(
   <Route element={<Providers />} errorElement={<ErrorPage />}>
@@ -60,6 +63,19 @@ export const routes = createRoutesFromElements(
           <Route index element={<Navigate replace to="/dashboard/resumes" />} />
         </Route>
       </Route>
+    </Route>
+    <Route path="builder">
+      <Route element={<AuthGuard />}>
+        <Route element={<BuilderLayout />}>
+          <Route path=":id" loader={builderLoader} element={<BuilderPage />} />
+          <Route index element={<Navigate replace to="/dashboard/resumes" />} />
+        </Route>
+      </Route>
+    </Route>
+
+    {/* Public Routes */}
+    <Route path=":username">
+      <Route path=":slug" loader={publicLoader} element={<PublicResumePage />} />
     </Route>
   </Route>,
 );

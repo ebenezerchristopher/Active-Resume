@@ -7,14 +7,9 @@ import { BaseCard } from "./_components/base-card";
 import { CreateResumeCard } from "./_components/create-card";
 import { ImportResumeCard } from "./_components/import-card";
 import { ResumeCard } from "./_components/resume-card";
-import { useEffect } from "react";
 
 export const GridView = () => {
   const { resumes, loading } = useResumes();
-
-  useEffect(() => {
-    console.log("Resumes updated:", resumes);
-  }, [resumes]);
 
   return (
     <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">

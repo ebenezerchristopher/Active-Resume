@@ -13,7 +13,12 @@ import { TwoFactorGuard } from "@/server/auth/guards/two-factor.guard";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { ErrorMessage } from "@active-resume/utils";
 import { Request } from "express";
-import { importResumeSchema } from "@active-resume/dto";
+import { importResumeSchema, ResumeDto } from "@active-resume/dto";
+import { ResumeGuard } from "./guards/resume.guard";
+import { Resume } from "./decorators/resume.decorator";
+import { OptionalGuard } from "../auth/guards/optional.guard";
+import { PrintResumeOutput } from "./entities/print-resume.entity";
+import { StatisticsEntity } from "./entities/statitics.entity";
 
 @Resolver()
 export class ResumeResolver {
@@ -34,10 +39,32 @@ export class ResumeResolver {
     }
   }
 
-  @Query(() => [ResumeEntity], { name: "resume" })
+  @Query(() => [ResumeEntity], { name: "resumes" })
   @UseGuards(TwoFactorGuard)
   findAll(@User("id") id: string) {
     return this.resumeService.findAll(id);
+  }
+
+  @Query(() => ResumeEntity, { name: "resume" })
+  @UseGuards(TwoFactorGuard, ResumeGuard)
+  findOne(@Resume() resume: ResumeDto) {
+    return resume;
+  }
+
+  @Query(() => ResumeEntity, { name: "public" })
+  @UseGuards(OptionalGuard)
+  findOneByUsernameSlug(@Context() { req }: { req: Request }, @User("id") userId: string) {
+    return this.resumeService.findOneByUsernameSlug(
+      req.query.username as string,
+      req.query.slug as string,
+      userId,
+    );
+  }
+
+  @Query(() => StatisticsEntity, { name: "statistics" })
+  @UseGuards(TwoFactorGuard)
+  findOneStatistics(@Context() { req }: { req: Request }) {
+    return this.resumeService.findOneStatistics(req.query.id as string);
   }
 
   @Mutation(() => ResumeEntity)
@@ -79,6 +106,19 @@ export class ResumeResolver {
   @Mutation(() => ResumeEntity)
   @UseGuards(TwoFactorGuard)
   deleteResume(@User("id") userId: string, @Context() { req }: { req: Request }) {
-    return this.resumeService.remove(userId, req.params.id);
+    return this.resumeService.remove(userId, req.query.id as string);
+  }
+
+  @Query(() => PrintResumeOutput)
+  @UseGuards(OptionalGuard, ResumeGuard)
+  async printResume(@User("id") userId: string | undefined, @Resume() resume: ResumeDto) {
+    try {
+      const url = await this.resumeService.printResume(resume, userId);
+
+      return { url };
+    } catch (error) {
+      Logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
   }
 }

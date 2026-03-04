@@ -8,7 +8,7 @@ export const fetchResumes = async () => {
   const response = await axios.post<GraphQLResponse<ResumeDto[]>>("/graphql", {
     query: `
       query {
-        resume {
+        resumes {
           id
           title
           slug
@@ -23,7 +23,7 @@ export const fetchResumes = async () => {
     `,
   });
 
-  return response.data.data.resume;
+  return response.data.data.resumes;
 };
 
 export const useResumes = () => {

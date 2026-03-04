@@ -11,8 +11,8 @@ export const deleteResume = async (data: DeleteResumeDto) => {
                   deleteResume {
                       id
                  }
+              }
          `,
-    variables: { data },
   });
 
   return response.data.data.deleteResume;

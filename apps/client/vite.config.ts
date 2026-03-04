@@ -6,7 +6,7 @@ import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { nxCopyAssetsPlugin } from "@nx/vite/plugins/nx-copy-assets.plugin";
 
 // used to keep the websocket alive when tunelling with ngrok
-const HMR_HOST = process.env.HMR_HOST || "parchingly-unvitiating-jeanelle.ngrok-free.dev";
+const HMR_HOST = process.env.HMR_HOST || "localhost";
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -23,23 +23,12 @@ export default defineConfig(() => ({
       overlay: false,
       clientPort: 443,
     },
-    allowedHosts: ["parchingly-unvitiating-jeanelle.ngrok-free.dev"],
+    allowedHosts: ["resume.devlab.stream", "host.docker.internal"],
     cors: process.env.NODE_ENV === "development" ? true : { origin: false },
     proxy: {
       "/api": {
         target: "http://localhost:7000",
         secure: false,
-        configure: (proxy, _options) => {
-          proxy.on("proxyReq", (proxyReq, req, _res) => {
-            console.log("Sending Request to Target:", req.method, req.url);
-          });
-          proxy.on("proxyRes", (proxyRes, req, _res) => {
-            console.log("Received Response from Target:", proxyRes.statusCode, req.url);
-          });
-          proxy.on("error", (err, _req, _res) => {
-            console.error("Proxy Error:", err);
-          });
-        },
       },
       "/artboard": {
         target: "http://localhost:6200",

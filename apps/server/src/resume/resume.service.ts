@@ -7,7 +7,7 @@ import {
 import { PrismaService } from "nestjs-prisma";
 import { StorageService } from "@/server/storage/storage.service";
 import { PrinterService } from "@/server/printer/printer.service";
-import { CreateResumeDto, ImportResumeDto, UpdateResumeDto } from "@active-resume/dto";
+import { CreateResumeDto, ImportResumeDto, ResumeDto, UpdateResumeDto } from "@active-resume/dto";
 import { ErrorMessage, generateRandomName, type DeepPartial } from "@active-resume/utils";
 import slugify from "@sindresorhus/slugify";
 import { defaultResumeData, ResumeData } from "@active-resume/schema";
@@ -46,8 +46,12 @@ export class ResumeService {
     return this.prisma.resume.findMany({ where: { userId }, orderBy: { updatedAt: "desc" } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} resume`;
+  findOne(id: string, userId?: string) {
+    if (userId) {
+      return this.prisma.resume.findUniqueOrThrow({ where: { userId_id: { userId, id } } });
+    }
+
+    return this.prisma.resume.findUniqueOrThrow({ where: { id } });
   }
 
   async update(userId: string, id: string, updateResumeDto: UpdateResumeDto) {
@@ -97,6 +101,35 @@ export class ResumeService {
     });
   }
 
+  async findOneStatistics(id: string) {
+    const result = await this.prisma.statistics.findFirst({
+      select: { views: true, downloads: true },
+      where: { resumeId: id },
+    });
+
+    return {
+      views: result?.views ?? 0,
+      downloads: result?.downloads ?? 0,
+    };
+  }
+
+  async findOneByUsernameSlug(username: string, slug: string, userId?: string) {
+    const resume = await this.prisma.resume.findFirstOrThrow({
+      where: { user: { username }, slug, visibility: "public" },
+    });
+
+    // Update statistics: increment the number of views by 1
+    if (!userId) {
+      await this.prisma.statistics.upsert({
+        where: { resumeId: resume.id },
+        create: { views: 1, downloads: 0, resumeId: resume.id },
+        update: { views: { increment: 1 } },
+      });
+    }
+
+    return resume;
+  }
+
   async remove(userId: string, id: string) {
     await Promise.all([
       // Remove files in storage, and their cached keys
@@ -105,5 +138,20 @@ export class ResumeService {
     ]);
 
     return this.prisma.resume.delete({ where: { userId_id: { userId, id } } });
+  }
+
+  async printResume(resume: ResumeDto, userId?: string) {
+    const url = await this.printerService.printResume(resume);
+
+    // Update statistics: increment the number of downloads by 1
+    if (!userId) {
+      await this.prisma.statistics.upsert({
+        where: { resumeId: resume.id },
+        create: { views: 0, downloads: 1, resumeId: resume.id },
+        update: { downloads: { increment: 1 } },
+      });
+    }
+
+    return url;
   }
 }

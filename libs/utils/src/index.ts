@@ -7,3 +7,8 @@ export * from "./namespaces/template";
 export * from "./namespaces/string";
 export * from "./namespaces/types";
 export * from "./namespaces/csv";
+export * from "./namespaces/array";
+export * from "./namespaces/page";
+export * from "./namespaces/number";
+export * from "./namespaces/fonts";
+export * from "./namespaces/color";

@@ -52,6 +52,22 @@ services:
       MINIO_ROOT_USER: ${STORAGE_ACCESS_KEY:-minioadmin}
       MINIO_ROOT_PASSWORD: ${STORAGE_SECRET_KEY:-minioadmin}
 
+  # Chrome Browser (for printing and previews)
+  chrome:
+    container_name: active-resume-chrome
+    image: ghcr.io/browserless/chromium:latest
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - ${CHROME_PORT:-8080}:3000
+    environment:
+      HEALTH: "true"
+      TOKEN: ${CHROME_TOKEN:-chrome_token}
+      PROXY_HOST: "localhost"
+      PROXY_PORT: ${CHROME_PORT:-8080}
+      PROXY_SSL: "false"
+
 volumes:
   minio_data:
   postgres_data:

@@ -47,10 +47,11 @@ export class UpdateResumeInput {
 
 @InputType()
 export class ImportResumeInput implements ImportResumeDto {
-  @Field()
-  title: string;
-  @Field()
-  slug: string;
+  @Field({ nullable: true })
+  title?: string;
+
+  @Field({ nullable: true })
+  slug?: string;
   @Field({ nullable: true })
   visibility?: "private" | "public";
   @Field(() => GraphQLJSON)

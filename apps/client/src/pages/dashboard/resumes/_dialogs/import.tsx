@@ -2,8 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "@lingui/core/macro";
 import { CheckIcon, DownloadSimpleIcon } from "@phosphor-icons/react";
 import type { JsonResume, LinkedIn } from "@active-resume/parser";
-import { JsonResumeParser, LinkedInParser } from "@active-resume/parser";
-//import type { ResumeData } from "@active-resume/schema";
+import { JsonResumeParser, LinkedInParser, ActiveResumeParser } from "@active-resume/parser";
+import type { ResumeData } from "@active-resume/schema";
 import {
   Button,
   Dialog,
@@ -38,6 +38,7 @@ import { useImportResume } from "@/client/services/resume/import";
 import { useDialog } from "@/client/stores/dialog";
 
 enum ImportType {
+  "active-resume-json" = "active-resume-json",
   "json-resume-json" = "json-resume-json",
   "linkedin-data-export-zip" = "linkedin-data-export-zip",
 }
@@ -57,7 +58,7 @@ type ValidationResult =
   | {
       isValid: true;
       type: ImportType;
-      result: LinkedIn | JsonResume;
+      result: LinkedIn | JsonResume | ResumeData;
     };
 
 export const ImportDialog = () => {
@@ -99,6 +100,14 @@ export const ImportDialog = () => {
     try {
       const { file, type } = formSchema.parse(form.getValues());
 
+      if (type === ImportType["active-resume-json"]) {
+        const parser = new ActiveResumeParser();
+        const data = await parser.readFile(file);
+        const result = parser.validate(data);
+
+        setValidationResult({ isValid: true, type, result });
+      }
+
       if (type === ImportType["json-resume-json"]) {
         const parser = new JsonResumeParser();
         const data = await parser.readFile(file);
@@ -135,6 +144,13 @@ export const ImportDialog = () => {
     if (!validationResult?.isValid || validationResult.type !== type) return;
 
     try {
+      if (type === ImportType["active-resume-json"]) {
+        const parser = new ActiveResumeParser();
+        const data = parser.convert(validationResult.result as ResumeData);
+
+        await importResume({ data });
+      }
+
       if (type === ImportType["json-resume-json"]) {
         const parser = new JsonResumeParser();
         const data = parser.convert(validationResult.result as JsonResume);
@@ -188,8 +204,8 @@ export const ImportDialog = () => {
                         <SelectValue placeholder={t`Please select a file type`} />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="active-resume-json">Active Resume (.json)</SelectItem>
                         <SelectItem value="json-resume-json">JSON Resume (.json)</SelectItem>
-
                         <SelectItem value="linkedin-data-export-zip">
                           LinkedIn Data Export (.zip)
                         </SelectItem>
